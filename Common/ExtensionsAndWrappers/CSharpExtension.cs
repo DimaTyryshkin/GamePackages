@@ -250,21 +250,7 @@ namespace GamePackages.Core
 
 			Vector3 p = lineP1 + lineDir * t;
 			return p;
-		}
-
-		public static  void Shift<T>(this T[] arr)
-		{
-			if(arr.Length<2)
-				return;
-			
-			T lastValue = arr[^1];
-
-			for (int i = arr.Length-1; i < 0; i--)
-			{
-				arr[i] = arr[i - 1];
-			}
-		}
-
+		} 
 	}
   
 	public static class ListExtension
@@ -276,10 +262,15 @@ namespace GamePackages.Core
 
 		public static void ShiftRight<T>(this IList<T> list, int count)
 		{
+			if (list.Count < 2)
+				return;
+
+			int lastIndex = list.Count - 1;
+			
 			for (int n = 0; n < count; n++)
 			{
-				T tmp = list[list.Count - 1];
-				for (int i = list.Count - 1; i > 0; i--)
+				T tmp = list[lastIndex];
+				for (int i = lastIndex; i > 0; i--)
 				{
 					list[i] = list[i - 1];
 				}
@@ -423,6 +414,25 @@ namespace GamePackages.Core
 			}
 
 			return -1;
+		}
+		
+		public static void ShiftRight<T>(this  T[] list, int count)
+		{
+			if (list.Length < 2)
+				return;
+
+			int lastIndex = list.Length - 1;
+
+			for (int n = 0; n < count; n++)
+			{
+				T tmp = list[lastIndex];
+				for (int i = lastIndex; i > 0; i--)
+				{
+					list[i] = list[i - 1];
+				}
+
+				list[0] = tmp;
+			}
 		}
 	}
 }
