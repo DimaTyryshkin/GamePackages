@@ -1,0 +1,20 @@
+{
+    "name": "GamePackages.Audio.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:16a8b4971b918304798b4d8c440130ca",
+        "GUID:8796e31d6ebfd0b41ba06ef21202575e",
+        "GUID:bf20612e78c737f4e86c5a33e325ccad"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

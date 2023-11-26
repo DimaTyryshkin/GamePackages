@@ -1,0 +1,20 @@
+{
+    "name": "GamePackages.ForestGenerator.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:776d03a35f1b52c4a9aed9f56d7b4229",
+        "GUID:8796e31d6ebfd0b41ba06ef21202575e",
+        "GUID:00e533e2032f7e347a3dd64176b690f5"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
