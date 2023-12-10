@@ -45,13 +45,16 @@ namespace GamePackages.Tools.ObjectsPalette
 		{
 			if (palettes == null || palettesNames == null)
 				Reload();
-
-			if (palettesNames.Length != palettes.Length)
-				Reload();
-
+			
 			if (palettes.Length == 0)
 				Reload();
-
+			
+			if (palettesNames.Length != palettes.Length)
+				Reload();
+				
+			if(palettes.Any(p=>!p))
+				Reload();
+			 
 			selectedPalette = Mathf.Clamp(selectedPalette, 0, palettes.Length - 1);
 
 			if (objectToTexture == null)
@@ -329,8 +332,9 @@ namespace GamePackages.Tools.ObjectsPalette
 				}
 				
 				bool isReplace = DragAndDrop.objectReferences.Length == 1 && palette.objects.Contains(DragAndDrop.objectReferences[0]);
-				bool dragFromAssets = DragAndDrop.paths.Length == DragAndDrop.objectReferences.Length;
-				if (isReplace || dragFromAssets) 
+				//bool dragFromAssets = DragAndDrop.paths.Length == DragAndDrop.objectReferences.Length;
+				bool dragNewObject = DragAndDrop.objectReferences.Length > 0; 
+				if (isReplace || dragNewObject) 
 				{
 					if (Event.current.type == EventType.DragUpdated)
 					{
@@ -341,7 +345,7 @@ namespace GamePackages.Tools.ObjectsPalette
 					{
 						Undo.RecordObject(palette, "drop objects");
 
-						if (isReplace && !dragFromAssets)
+						if (isReplace)
 						{
 							int sourceIndex = palette.objects.IndexOf(DragAndDrop.objectReferences[0]);
 
@@ -354,16 +358,30 @@ namespace GamePackages.Tools.ObjectsPalette
 
 							palette.objects.RemoveAt(sourceIndex);
 						}
-
-						if(dragFromAssets)
+						else
 						{ 
 							int insertIndex = palette.objects.IndexOf(obj);
 							insertIndex++;
-							foreach (var dragObj in DragAndDrop.objectReferences)
+							foreach (Object dragObj in DragAndDrop.objectReferences)
 							{
-								if (!palette.objects.Contains(dragObj))
+								Object objToAdd = dragObj;
+								if (dragObj is GameObject)
 								{
-									palette.objects.Insert(insertIndex, dragObj);
+									string pathToPrefab = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(dragObj);
+									Debug.Log($"pathToPrefab={pathToPrefab}");
+									if (!string.IsNullOrWhiteSpace(pathToPrefab))
+									{
+										objToAdd = AssetDatabase.LoadAssetAtPath<GameObject>(pathToPrefab);
+									}
+									else
+									{
+										objToAdd = null;
+									}
+								}
+
+								if (objToAdd && !palette.objects.Contains(objToAdd))
+								{
+									palette.objects.Insert(insertIndex, objToAdd);
 									insertIndex++;
 								}
 							}
