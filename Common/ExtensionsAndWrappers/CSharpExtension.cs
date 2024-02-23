@@ -10,6 +10,12 @@ namespace GamePackages.Core
 {
 	public static class EnumerableExtension
 	{
+		public static void ToStringMultilineAndLog<T>(this IEnumerable<T> collection, string header = null, Func<T, string> func = null, int tabCount = 0)
+		{
+			string log =collection.ToStringMultiline(header, func, tabCount);
+			//Debug.Log(log); 
+		}
+
 		public static string ToStringMultiline<T>(this IEnumerable<T> collection, string header = null, Func<T, string> func = null, int tabCount = 0)
 		{
 			if (func == null)
@@ -355,6 +361,66 @@ namespace GamePackages.Core
 
 			return collection[maxIndex];
 		}
+
+		public static int MinIndex<T>(this IList<T> collection, Func<T, float> selector)
+		{
+			return MinIndex(collection, selector, collection.Count);
+		}
+
+		public static int MinIndex<T>(this IList<T> collection, Func<T,float> selector, int count)
+		{
+			if (count == 0)
+				return -1;
+			
+			int minIndex = 0;
+			float minValue =  selector(collection[0]);
+
+			for (int i = 1; i < count; i++)
+			{
+				float value = selector(collection[i]);
+				if (value < minValue)
+				{
+					minValue = value;
+					minIndex = i;
+				}
+			}
+
+			return minIndex;
+		}
+		
+		
+		public static int MaxIndex<T>(this IList<T> collection, Func<T, float> selector)
+		{
+			return MaxIndex(collection, selector, collection.Count);
+		}
+		
+		public static int MaxIndex<T>(this IList<T> collection, Func<T,float> selector, int count)
+		{ 
+			if (count == 0)
+				return -1;
+			
+			int maxIndex = 0;
+			float maxValue = selector(collection[0]);
+
+			for (int i = 1; i < count; i++)
+			{
+				float value = selector(collection[i]);
+				if (value > maxValue)
+				{
+					maxValue = value;
+					maxIndex = i;
+				}
+			}
+
+			return maxIndex;
+		}
+		
+		public static void Replace<T>(this IList<T> collection, int i1, int i2)
+		{
+			T temp = collection[i1];
+			collection[i1] = collection[i2];
+			collection[i2] = temp;
+		}
 	}
 
 	public static class IEnumerableExtension
@@ -433,6 +499,13 @@ namespace GamePackages.Core
 
 				list[0] = tmp;
 			}
+		}
+		
+		public static void Replace<T>(this T[] collection, int i1, int i2)
+		{
+			T temp = collection[i1];
+			collection[i1] = collection[i2];
+			collection[i2] = temp;
 		}
 	}
 }
