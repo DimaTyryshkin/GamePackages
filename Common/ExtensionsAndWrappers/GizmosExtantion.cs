@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace GamePackages.Core
 {
@@ -72,7 +73,7 @@ namespace GamePackages.Core
             {
                 for (int i = 0; i < points.Length; i++)
                 {
-                    Gizmos.DrawWireSphere(points[i], pointRadius);
+                    Handles.DrawWireDisc(points[i], Vector3.up, pointRadius); 
                 }
             }
         }
