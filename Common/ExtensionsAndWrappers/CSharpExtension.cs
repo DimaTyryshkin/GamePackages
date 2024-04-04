@@ -257,6 +257,17 @@ namespace GamePackages.Core
 			Vector3 p = lineP1 + lineDir * t;
 			return p;
 		} 
+		
+		public static int PingPong(int t, int length)
+		{
+			int q = t / length;
+			int r = t % length;
+
+			if ((q % 2) == 0)
+				return r;
+			else
+				return length - r;
+		}
 	}
   
 	public static class ListExtension

@@ -195,8 +195,8 @@ namespace GamePackages.Tools.ObjectsPalette
 						else
 						{
 							if (GUILayout.Button(obj.name, GUILayout.ExpandWidth(true)))
-								//Selection.activeObject = obj;
-								AssetDatabase.OpenAsset(obj);
+								Selection.activeObject = obj;
+								//AssetDatabase.OpenAsset(obj); // Модельки открываются в внешнем редакторе
 						}
 					}
 				}
@@ -240,7 +240,7 @@ namespace GamePackages.Tools.ObjectsPalette
 
 			if (palette.subPalettes.Count == 0)
 			{
-				DrawPaletteObjects(palette, countOnLine, cellSize, space);
+				DrawLevelDesignPaletteObjects(palette, countOnLine, cellSize, space);
 			}
 			else
 			{
@@ -252,7 +252,7 @@ namespace GamePackages.Tools.ObjectsPalette
 			}
 		}
 
-		void DrawPaletteObjects(ObjectsPalette palette, int countOnLine, int cellSize, int space)
+		void DrawLevelDesignPaletteObjects(ObjectsPalette palette, int countOnLine, int cellSize, int space)
 		{
 			int i = 0;
 			int y = 0;

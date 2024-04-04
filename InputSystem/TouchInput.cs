@@ -89,7 +89,7 @@ namespace GamePackages.InputSystem
 
 		public event UnityAction<Vector3> Drag;
 		public event UnityAction<float>   Scroll;
-
+		public event UnityAction<IClickHandler> ClickOnClickHandler;
 		public event UnityAction<GameObject> ClickOnGameObject;
 		public event UnityAction FingerTouchEnded;
 
@@ -276,6 +276,7 @@ namespace GamePackages.InputSystem
 												pointerImage.transform.position = startDragPoint;
 											}
 
+											ClickOnClickHandler?.Invoke(clickHandler);
 											clickHandler.Click(new EventData() {startPoint = startDragPoint});
 										}
 									}
