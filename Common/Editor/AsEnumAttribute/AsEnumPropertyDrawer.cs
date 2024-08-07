@@ -15,11 +15,10 @@ namespace GamePackages.Core
 			{
 				var      a      = attribute as AsEnumAttribute;
 				string[] labels = AsEnumAttributeValues.GetAvailableLabels(a.ValuesSource);
-				string[] values = AsEnumAttributeValues.GetAvailableValues(a.ValuesSource);
 
 
 				string curValue = property.stringValue;
-				int    index    = values.IndexOf(curValue);
+				int    index    = labels.IndexOf(v => AsEnumAttributeValues.GetValueFromLabel(v)==curValue);
 
 				EditorGUI.BeginChangeCheck();
 				EditorGUI.BeginProperty(position, label, property);
@@ -28,7 +27,7 @@ namespace GamePackages.Core
 					{
 						position  = EditorGUI.PrefixLabel(position, label);
 						GUI.color = Color.red;
- 
+
 						if (GUI.Button(position, curValue))
 							index = 0;
 
@@ -44,8 +43,11 @@ namespace GamePackages.Core
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					if (index > -1)
-						property.stringValue = values[index];
+					if (index >= 0)
+					{
+						string value = AsEnumAttributeValues.GetValueFromLabel(labels[index]);
+						property.stringValue = value;
+					}
 				}
 			}
 			else
