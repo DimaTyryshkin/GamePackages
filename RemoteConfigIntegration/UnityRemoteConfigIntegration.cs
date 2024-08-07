@@ -1,10 +1,13 @@
 ﻿using System;
-using Unity.Services.RemoteConfig;
 using UnityEngine;
 using UnityEngine.Events;
+#if ENABLE_CLOUD_SERVICES_RemoteConfig
+using Unity.Services.RemoteConfig;
+#endif
 
 namespace GamePackages.RemoteConfigIntegration
 {
+#if ENABLE_CLOUD_SERVICES_RemoteConfig // Add manually in build settings
     public class UnityRemoteConfigIntegration<T> where T : class, new()
     {  
         //string log = "";
@@ -84,4 +87,5 @@ namespace GamePackages.RemoteConfigIntegration
         {
         }
     }
+#endif
 }

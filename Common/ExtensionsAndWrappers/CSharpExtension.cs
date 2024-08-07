@@ -518,12 +518,5 @@ namespace GamePackages.Core
 				list[0] = tmp;
 			}
 		}
-		
-		public static void Replace<T>(this T[] collection, int i1, int i2)
-		{
-			T temp = collection[i1];
-			collection[i1] = collection[i2];
-			collection[i2] = temp;
-		}
 	}
 }
