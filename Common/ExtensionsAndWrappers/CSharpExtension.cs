@@ -455,6 +455,13 @@ namespace GamePackages.Core
 		{
 			return array[UnityEngine.Random.Range(0, array.Length)];
 		}
+		
+		public static void Replace<T>(this T[] array, int a, int b)
+		{
+			var temp = array[a];
+			array[a] = array[b];
+			array[b] = temp;
+		}
 
 		public static T Random<T>(this T[] array, Random rnd)
 		{ 
