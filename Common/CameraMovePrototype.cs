@@ -1,5 +1,4 @@
-﻿using GamePackages.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GamePackages.Core
 {
@@ -10,7 +9,7 @@ namespace GamePackages.Core
 		[SerializeField] RangeMinMax distanceMinMax = new RangeMinMax(2, 100);
 		[SerializeField] Camera thisCamera;
 		[SerializeField] Transform owner;
-		[SerializeField] bool yAxis;
+		[SerializeField] bool xyPlane;
 	    
 
 		float distance;
@@ -32,7 +31,7 @@ namespace GamePackages.Core
 		{
 			float horizontalInput = Input.GetAxis("Horizontal");
 			float verticalInput = Input.GetAxis("Vertical");
-			Vector3 input = yAxis ? new Vector3(horizontalInput, verticalInput, 0) : new Vector3(horizontalInput, 0, verticalInput);
+			Vector3 input = xyPlane ? new Vector3(horizontalInput, verticalInput, 0) : new Vector3(horizontalInput, 0, verticalInput);
 		    
 			distance -= distance * Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * scaleSensitiveFactor;
 			distance = distanceMinMax.Clamp(distance);

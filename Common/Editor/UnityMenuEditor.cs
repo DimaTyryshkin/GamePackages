@@ -16,18 +16,32 @@ namespace GamePackages.Core.Editor
                 collection.LoadFromCurrentDirectory(true);
         }   
         
-        [MenuItem("CONTEXT/Component/CopyNameToGO")]
-        static void DoubleMass(MenuCommand command)
+        [MenuItem("CONTEXT/Component/Set name")]
+        static void SetName(MenuCommand command)
         {
             Component component = (Component)command.context;
             
             if (component)
             {
+                string newName;
                 GameObject go = component.gameObject;
-                string name = component.GetType().Name;
-                string newName = Char.ToLower(name[0]) + name.Substring(1);
+                
+                if(component is SpriteRenderer spriteRenderer)
+                    newName = spriteRenderer.sprite.name;
+                else
+                    newName = component.GetType().Name; 
+
+                newName = Char.ToLower(newName[0]) + newName.Substring(1);
                 Undo.RegisterCompleteObjectUndo(go, "rename");
+                
                 go.name = newName;
+                
+                string path = AssetDatabase.GetAssetPath(go);
+                if (!string.IsNullOrEmpty(path))
+                {
+                    AssetDatabase.RenameAsset(path, newName);
+                    EditorUtility.SetDirty(go);
+                }
             }
         }   
          

@@ -1,6 +1,11 @@
-﻿using System.Collections;
-using UnityEditor;
+﻿#if UNITY_EDITOR
+
+using System;
+using System.Collections;
 using Object = UnityEngine.Object;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace GamePackages.Core
 {
@@ -16,6 +21,11 @@ namespace GamePackages.Core
             EditorCoroutine coroutine = new EditorCoroutine(routine, routineContainer);
             coroutine.Start();
             return coroutine;
+        }
+
+        public static EditorCoroutine CallWithDelay(UnityAction action, float delay, UnityEngine.Object routineContainer = null)
+        {
+            return Start(Delay(delay, action));
         }
 
         CustomCoroutineHandler routineHandler;
@@ -54,5 +64,15 @@ namespace GamePackages.Core
                 Stop();
             }
         }
+
+        static IEnumerator Delay(float delay, UnityAction action)
+        {
+            DateTime t = DateTime.Now + TimeSpan.FromSeconds(delay);
+            while (DateTime.Now < t)
+                yield return null;
+            
+            action?.Invoke();
+        }
     }
 }
+#endif

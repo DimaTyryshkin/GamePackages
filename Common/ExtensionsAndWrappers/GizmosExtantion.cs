@@ -5,11 +5,11 @@ namespace GamePackages.Core
 {
     public static class GizmosExtension
     {
-       static  Quaternion xyRight = Quaternion.Euler(0, 0, +20);
-       static Quaternion xyLeft = Quaternion.Euler(0, 0, -20);
+       static Quaternion xyRight = Quaternion.Euler(0, 0, +20);
+       static Quaternion xyLeft  = Quaternion.Euler(0, 0, -20);
        
-       static  Quaternion xzRight = Quaternion.Euler(0, +20, 0);
-       static Quaternion xzLeft = Quaternion.Euler(0, -20, 0);
+       static Quaternion xzRight = Quaternion.Euler(0, +20, 0);
+       static Quaternion xzLeft  = Quaternion.Euler(0, -20, 0);
 
         public static void DrawArrowXY(Vector3 from, Vector3 to, float size = 0.25f)
         {
