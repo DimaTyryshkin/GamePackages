@@ -90,7 +90,16 @@ namespace GamePackages.Core
 			
 			return false;
 		}
-		 		
+
+		public static string GameObjectIndexToNameSuffix(int index, int maxIndex)
+		{
+			string s = index.ToString();
+			for (int i = s.Length; i < maxIndex.ToString().Length; i++)
+				s = "0" + s;
+
+			return s;
+		}
+
 		public static int FindSubstringIndex(this string origin, string subString)
 		{
 			for (int i = 0; i < origin.Length; i++)
