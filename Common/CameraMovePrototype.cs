@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GamePackages.Core.Validation;
+using UnityEngine;
 
 namespace GamePackages.Core
 {
@@ -7,8 +8,9 @@ namespace GamePackages.Core
 		[SerializeField] float moveSensitiveFactor = 10; 
 		[SerializeField] float scaleSensitiveFactor = 10;
 		[SerializeField] RangeMinMax distanceMinMax = new RangeMinMax(2, 100);
-		[SerializeField] Camera thisCamera;
-		[SerializeField] Transform owner;
+		[SerializeField, IsntNull] Camera thisCamera;
+		[SerializeField, IsntNull] Transform owner;
+		[SerializeField, IsntNull] Transform startTarget;
 		[SerializeField] bool xyPlane;
 	    
 
@@ -25,6 +27,15 @@ namespace GamePackages.Core
 			{
 				distance = Vector3.Distance(owner.position, thisCamera.transform.position);
 			}
+
+			Vector3 offset = startTarget.position - transform.position;
+			if (xyPlane)
+				offset.z = 0;
+			else
+				offset.y = 0;
+
+			transform.position += offset;
+
 		}
 
 		void LateUpdate()
