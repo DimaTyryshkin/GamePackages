@@ -8,9 +8,14 @@ namespace GamePackages.Core
 {
     public static class Fade
     {
-        public static IEnumerator FromToPosition(Transform obj, Vector3 objPos, Vector3 targetObj, float duration)
+        public static IEnumerator FromToPosition(Transform obj, Vector3 to, float duration)
         {
-            void SetPos(float t) => obj.position = Vector3.Lerp(objPos, targetObj, t);
+            yield return FromToPosition(obj, obj.position, to, duration);
+        }
+
+        public static IEnumerator FromToPosition(Transform obj, Vector3 from, Vector3 to, float duration)
+        {
+            void SetPos(float t) => obj.position = Vector3.Lerp(from, to, t);
             yield return FromTo(0, 1, duration, SetPos);
         }
 
@@ -41,9 +46,9 @@ namespace GamePackages.Core
             yield return FromTo(from, to, duration, SetAlpha);
         }
 
-        public static IEnumerator RectScaleFromTo(Transform transform, Vector2 from, Vector2 to, float duration)
+        public static IEnumerator ScaleFromTo(Transform transform, Vector3 from, Vector3 to, float duration)
         {
-            void SetSize(float t) => transform.SetLocalScale(Vector2.Lerp(from, to, t));
+            void SetSize(float t) => transform.SetLocalScale(Vector3.Lerp(from, to, t));
             yield return FromTo(0, 1, duration, SetSize);
         }
 
