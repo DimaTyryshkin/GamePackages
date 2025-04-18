@@ -1,8 +1,8 @@
 using System;
 using GamePackages.Core.Validation;
-using UnityEditor; 
+using UnityEditor;
 using UnityEngine;
- 
+
 namespace GamePackages.Core.Editor
 {
     public static class UnityMenuEditor
@@ -14,51 +14,42 @@ namespace GamePackages.Core.Editor
 
             if (collection)
                 collection.LoadFromCurrentDirectory(true);
-        }   
-        
+        }
+
         [MenuItem("CONTEXT/Component/Set name")]
         static void SetName(MenuCommand command)
         {
             Component component = (Component)command.context;
-            
+
             if (component)
             {
                 string newName;
                 GameObject go = component.gameObject;
-                
-                if(component is SpriteRenderer spriteRenderer)
+
+                if (component is SpriteRenderer spriteRenderer)
                     newName = spriteRenderer.sprite.name;
                 else
-                    newName = component.GetType().Name; 
+                    newName = component.GetType().Name;
 
                 newName = Char.ToLower(newName[0]) + newName.Substring(1);
-                Undo.RegisterCompleteObjectUndo(go, "rename");
-                
-                go.name = newName;
-                
-                string path = AssetDatabase.GetAssetPath(go);
-                if (!string.IsNullOrEmpty(path))
-                {
-                    AssetDatabase.RenameAsset(path, newName);
-                    EditorUtility.SetDirty(go);
-                }
+                go.RenameInEditor(newName);
             }
-        }   
-         
+        }
+
         [MenuItem("GamePackages/Validate/All assets for build", false, 11)]
         public static void ValidateAll_MenuItem()
         {
-            AssetsValidator.ValidateAll(); 
+            AssetsValidator.ValidateAll();
         }
-         
-        
+
+
         [MenuItem("GamePackages/Validate/Current scene", false, 12)]
-        public static void ValidateCurrentScene_MenuItem() 
+        public static void ValidateCurrentScene_MenuItem()
         {
-            AssetsValidator.ValidateCurrentScene(); 
+            AssetsValidator.ValidateCurrentScene();
         }
-        
-       
+
+
     }
 }
 

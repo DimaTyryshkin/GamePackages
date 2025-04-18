@@ -4,90 +4,121 @@ using UnityEngine.Assertions;
 
 namespace GamePackages.JsonPlayerData
 {
-	public interface IStorage
-	{
-		void Save();
-		void Clear();
-	}
+    /* Пример инициализации
+   public class GameFactory : MonoBehaviour
+   {
+       static PlayerDataStorage<AccountData> storage;
+       public static string PlayerDataStorageFileName => Path.Combine(Application.persistentDataPath, "PlayerDataJsonString.json");
 
-	public class PlayerDataStorage<T>:IStorage 
-		where T :BaseAccountData, new()
-	{ 
-		T     data;
-		IStringStorage jsonStorage;
+       public static PlayerDataStorage<AccountData> Storage
+       {
+           get
+           {
+               if (storage == null)
+               {
+                   IStringStorage stringStorage =
+#if UNITY_EDITOR
 
-		
+                       new FileStringStorage(new FileInfo(PlayerDataStorageFileName));
+#else
+                       new PlayerPrefsStringStorage("PlayerDataJsonString", new PlayerPrefsWrapper());
+#endif
+                   storage = new PlayerDataStorage<AccountData>(stringStorage);
+               }
 
-		public PlayerDataStorage(IStringStorage jsonStorage)
-		{
-			Assert.IsNotNull(jsonStorage);
-			this.jsonStorage = jsonStorage;
-		}
+               return storage;
+           }
+       }
 
-		public string GetRawSaveData()
-		{
-			return jsonStorage.GetString("");
-		}
+       public static AccountData Data => Storage.GetDataSingleton();
+   }
+   */
 
-		public static T LoadFromJson(string json)
-		{
-			var data = JsonUtility.FromJson<T>(json);
-			Assert.IsNotNull(data);
+    public interface IStorage
+    {
+        void Save();
+        void Clear();
+    }
 
-			return data;
-		}
+    public class PlayerDataStorage<T> : IStorage
+        where T : BaseAccountData, new()
+    {
+        T data;
+        IStringStorage jsonStorage;
 
-		public static string ToJson(T data)
-		{
-			return JsonUtility.ToJson(data, true);
-		}
 
-		T LoadFromJson_CatchExceptionDecorator(string json)
-		{
-			try
-			{
-				return LoadFromJson(json);
-			}
-			catch (Exception e)
-			{
-				Debug.LogError(e);
-				return new T();
-			}
-		}
 
-		public T GetDataSingleton()
-		{ 
-			if (data == null)
-			{
-				var json = jsonStorage.GetString("{}");
-//#if UNITY_EDITOR
-				data = LoadFromJson(json);
-//#else
-//				data = LoadFromJson_CatchExceptionDecorator(json);
-//#endif
-			}
+        public PlayerDataStorage(IStringStorage jsonStorage)
+        {
+            Assert.IsNotNull(jsonStorage);
+            this.jsonStorage = jsonStorage;
+        }
 
-			data.Validate();
-			return data;
-		}
+        public string GetRawSaveData()
+        {
+            return jsonStorage.GetString("");
+        }
 
-		public void Save()
-		{
-			if (data == null)
-				return;
+        public static T LoadFromJson(string json)
+        {
+            var data = JsonUtility.FromJson<T>(json);
+            Assert.IsNotNull(data);
 
-			data.metadata = new BaseAccountData.Metadata();
-			data.metadata.FillData();
-			
-			string json = ToJson(data);
-			jsonStorage.SetString(json); 
-			jsonStorage.Save();
-		}
+            return data;
+        }
 
-		public void Clear()
-		{
-			data = new T();
-			Save();
-		}
-	}
+        public static string ToJson(T data)
+        {
+            return JsonUtility.ToJson(data, true);
+        }
+
+        T LoadFromJson_CatchExceptionDecorator(string json)
+        {
+            try
+            {
+                return LoadFromJson(json);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                return new T();
+            }
+        }
+
+        public T GetDataSingleton()
+        {
+            if (data == null)
+            {
+                var json = jsonStorage.GetString("{}");
+                //#if UNITY_EDITOR
+                data = LoadFromJson(json);
+                //#else
+                //				data = LoadFromJson_CatchExceptionDecorator(json);
+                //#endif
+            }
+
+            data.SetStorage(this);
+            data.Validate();
+            return data;
+        }
+
+        public void Save()
+        {
+            if (data == null)
+                return;
+
+            data.metadata = new BaseAccountData.Metadata();
+            data.metadata.FillData();
+
+            string json = ToJson(data);
+            jsonStorage.SetString(json);
+            jsonStorage.Save();
+        }
+
+        public void Clear()
+        {
+            data = new T();
+            Save();
+        }
+    }
 }

@@ -3,79 +3,79 @@ using UnityEngine.Assertions;
 
 namespace GamePackages.Core
 {
-	public class BoolCounter
-	{
-		int counter;
+    public class BoolCounter
+    {
+        int counter;
 
-		public bool IsZero => counter == 0;
+        public bool IsZero => counter == 0;
 
-		public void Reset()
-		{
-			counter = 0;
-		}
+        public void Reset()
+        {
+            counter = 0;
+        }
 
-		public void Increase()
-		{
-			counter++;
-		}
+        public void Increase()
+        {
+            counter++;
+        }
 
-		public void Decrease()
-		{
-			counter--;
-			Assert.IsFalse(counter < 0, "BoolCounter.Decrease");
-		}
-	}
+        public void Decrease()
+        {
+            counter--;
+            Assert.IsFalse(counter < 0, "BoolCounter.Decrease");
+        }
+    }
 
-	public class BoolCounter2
-	{
-		public LinkedList<Value> values = new LinkedList<Value>();
+    public class BoolCounter2
+    {
+        public LinkedList<Value> values = new LinkedList<Value>();
 
-		public bool IsZero => values.Count == 0;
+        public bool IsZero => values.Count == 0;
 
-		public class Value
-		{
-			public readonly string                name;
-			public          bool                  Expired { get; private set; }
-			public          LinkedListNode<Value> thisNode;
+        public class Value
+        {
+            public readonly string name;
+            public bool Expired { get; private set; }
+            public LinkedListNode<Value> thisNode;
 
-			List<string> log;
+            List<string> log;
 
-			public Value(string name)
-			{
-				Assert.IsFalse(string.IsNullOrWhiteSpace(name));
-				this.name = name;
-			}
+            public Value(string name)
+            {
+                Assert.IsFalse(string.IsNullOrWhiteSpace(name));
+                this.name = name;
+            }
 
-			public void Log(string line)
-			{
-				if (log == null)
-					log = new List<string>(4);
+            public void Log(string line)
+            {
+                if (log == null)
+                    log = new List<string>(4);
 
-				log.Add(line);
-			}
+                log.Add(line);
+            }
 
-			public void Return()
-			{
-				Assert.IsFalse(Expired);
+            public void Return()
+            {
+                Assert.IsFalse(Expired);
 
-				Expired = true;
-				thisNode.List.Remove(thisNode);
-			}
+                Expired = true;
+                thisNode.List.Remove(thisNode);
+            }
 
-			public string Print()
-			{
-				if (log == null)
-					return name;
-				else
-					return log.ToStringMultilineWithIndex(name, tabCount: 1);
-			}
-		}
+            public string Print()
+            {
+                if (log == null)
+                    return name;
+                else
+                    return log.ToStringMultilineWithIndex(name, tabCount: 1);
+            }
+        }
 
-		public Value Add(string valueName = "NoName")
-		{
-			var newValue = new Value(valueName);
-			newValue.thisNode = values.AddLast(newValue);
-			return newValue;
-		}
-	}
+        public Value Add(string valueName = "NoName")
+        {
+            var newValue = new Value(valueName);
+            newValue.thisNode = values.AddLast(newValue);
+            return newValue;
+        }
+    }
 }
