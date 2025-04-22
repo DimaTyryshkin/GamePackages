@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3105977493369366998}
   - component: {fileID: 2555057338439910305}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: DebugMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 3585513171919338217}
   - component: {fileID: 8000518326054856515}
   - component: {fileID: 5226590771987469399}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}

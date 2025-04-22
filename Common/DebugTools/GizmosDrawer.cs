@@ -74,10 +74,10 @@ namespace GamePackages.Core
 
         public DebugMarker GetMarker(Vector3 pos)
         {
-            var marker = transform.InstantiateAsChild(prefab);
+            DebugMarker marker = transform.InstantiateAsChild(prefab);
+            marker.gameObject.hideFlags = HideFlags.DontSave;
             marker.transform.position = pos;
             marker.gameObject.SetActive(true);
-            marker.hideFlags = HideFlags.DontSave;
 
             return marker;
         }
