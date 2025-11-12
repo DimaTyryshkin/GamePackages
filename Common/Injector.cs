@@ -38,11 +38,11 @@ namespace GamePackages.Core
 
         public void ResolveFields<T>(T obj)
         {
-            System.Reflection.FieldInfo[] fields = obj
+            FieldInfo[] fields = obj
                 .GetType()
-                .GetFields(System.Reflection.BindingFlags.Instance |
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.NonPublic);
+                .GetFields(BindingFlags.Instance |
+                BindingFlags.Public |
+                BindingFlags.NonPublic);
 
             foreach (var field in fields)
             {
@@ -56,7 +56,7 @@ namespace GamePackages.Core
                 }
                 else
                 {
-                    throw new Exception($"Value for inject not found. Field: '{field.FieldType.Name} {field.DeclaringType.Name}.{field.Name}'");
+                    throw new Exception($"Value for inject not found. Type: <B>{field.FieldType.Name}</B> Member: <b>{field.DeclaringType.Name}.{field.Name}</b>");
                 }
             }
         }
@@ -65,9 +65,9 @@ namespace GamePackages.Core
         {
             var properties = obj
                 .GetType()
-                .GetProperties(System.Reflection.BindingFlags.Instance |
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.NonPublic);
+                .GetProperties(BindingFlags.Instance |
+                BindingFlags.Public |
+                BindingFlags.NonPublic);
 
             foreach (var p in properties)
             {

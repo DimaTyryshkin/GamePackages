@@ -13,6 +13,11 @@ namespace GamePackages.Core
             return this;
         }
 
+        public DebugMarker Text<T>(T toText)
+        {
+            return Text(toText.ToString());
+        }
+
         public DebugMarker Duration(float duration)
         {
             if (Application.isPlaying)
