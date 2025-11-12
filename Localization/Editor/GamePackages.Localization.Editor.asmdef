@@ -2,8 +2,7 @@
     "name": "GamePackages.Localization.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:aa472d1e3c3bc814fa1e3e7dcb1c0f1d",
-        "GUID:8796e31d6ebfd0b41ba06ef21202575e"
+        "GUID:86092722ff4978747b212689c79cfc4c"
     ],
     "includePlatforms": [
         "Editor"
