@@ -10,21 +10,20 @@ namespace GamePackages.Core
         private Transform root;
         readonly Queue<GameObject> pool = new Queue<GameObject>();
 
-        //readonly HashSet<GameObject> instances = new HashSet<GameObject>();
+        public bool forceNewInstant;
 
-        public ObjectPool(GameObject prefab, Transform root, int initialSize = 1)
+        public ObjectPool(GameObject prefab, Transform root, int initialSize = 0)
         {
             Assert.IsNotNull(prefab);
             Assert.IsNotNull(root);
             this.prefab = prefab;
             this.root = root;
 
-            for (var i = 0; i < initialSize; i++)
-            {
-                var obj = CreateInstance();
-                obj.SetActive(false);
-                pool.Enqueue(obj);
-            }
+            //for (var i = 0; i < initialSize; i++)
+            //{
+            //    var obj = CreateInstance();
+            //    pool.Enqueue(obj);
+            //}
         }
 
         public bool IsPoolForPrefab(GameObject prefab)
@@ -32,19 +31,19 @@ namespace GamePackages.Core
             return this.prefab == prefab;
         }
 
-        public GameObject GetObject()
+        public GameObject GetObject(Transform parent)
         {
-            var obj = pool.Count > 0 ? pool.Dequeue() : CreateInstance();
-            obj.SetActive(true);
+            GameObject obj = (pool.Count > 0 && !forceNewInstant) ?
+                pool.Dequeue() :
+                CreateInstance();
+
+            obj.transform.SetParent(parent);
             return obj;
         }
 
         public void ReturnObject(GameObject go)
         {
-            Assert.IsNotNull(go);
-            //Assert.IsTrue(IsObjectFromPool(go));
-
-            go.SetActive(false);
+            go.transform.SetParent(root);
             pool.Enqueue(go);
         }
 
@@ -63,7 +62,6 @@ namespace GamePackages.Core
         GameObject CreateInstance()
         {
             GameObject obj = GameObject.Instantiate(prefab);
-            //instances.Add(obj);
             obj.transform.SetParent(root);
             return obj;
         }
