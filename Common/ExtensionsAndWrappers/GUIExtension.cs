@@ -25,26 +25,34 @@ namespace GamePackages.Core
         public static void DrawSprite(Sprite sprite, float maxSize)
         {
             Rect r = sprite.rect;
-            float w = r.width;
-            float h = r.height;
-
-            if (w > maxSize)
-            {
-                float k = w / maxSize;
-                w /= k;
-                h /= k;
-            }
-
-            if (h > maxSize)
-            {
-                float k = h / maxSize;
-                w /= k;
-                h /= k;
-            }
-
-
-            var rect = GUILayoutUtility.GetRect(w, h, GUILayout.Width(w), GUILayout.Height(h));
+            Vector2Int size = GetTextureSize(r.width, r.height, maxSize, maxSize);
+            int w = size.x;
+            int h = size.y;
+            Rect rect = GUILayoutUtility.GetRect(w, h, GUILayout.Width(w), GUILayout.Height(h));
             GUIExtension.DrawSprite(rect, sprite);
+        }
+
+        public static Vector2Int GetTextureSize(float width, float height, float maxWidth, float maxHeight)
+        {
+            if (maxWidth > 0 && (float)width > maxWidth)
+            {
+                float k = (float)width / maxWidth;
+                width /= k;
+                height /= k;
+            }
+
+            if (maxHeight > 0 && (float)height > maxHeight)
+            {
+                float k = (float)height / maxHeight;
+                width /= k;
+                height /= k;
+            }
+
+            //return new Vector2Int(
+            //    Mathf.Min((int)maxWidth, (int)width),
+            //    Mathf.Min((int)maxHeight, (int)height));
+
+            return new Vector2Int((int)width, (int)height);
         }
     }
 }

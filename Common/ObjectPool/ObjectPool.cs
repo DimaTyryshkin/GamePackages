@@ -18,12 +18,6 @@ namespace GamePackages.Core
             Assert.IsNotNull(root);
             this.prefab = prefab;
             this.root = root;
-
-            //for (var i = 0; i < initialSize; i++)
-            //{
-            //    var obj = CreateInstance();
-            //    pool.Enqueue(obj);
-            //}
         }
 
         public bool IsPoolForPrefab(GameObject prefab)
