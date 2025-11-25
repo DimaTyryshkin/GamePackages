@@ -53,8 +53,8 @@ namespace GamePackages.Core
 
         public static IEnumerable<Vector2Int> ForEach(this RectInt rect)
         {
-            var min = rect.min;
-            var max = rect.max;
+            Vector2Int min = rect.min;
+            Vector2Int max = rect.max;
             for (int x = min.x; x < max.x; x++)
             {
                 for (int y = min.y; y < max.y; y++)

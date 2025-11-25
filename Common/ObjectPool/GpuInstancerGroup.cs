@@ -27,8 +27,10 @@ namespace GamePackages.Core
             mesh = prefab.GetComponent<MeshFilter>().sharedMesh;
             material = prefab.GetComponent<MeshRenderer>().sharedMaterial;
             propertyBlock = new MaterialPropertyBlock();
-            matrices = new List<List<Matrix4x4>>();
-            matrices.Add(new List<Matrix4x4>(maxCount));
+            matrices = new List<List<Matrix4x4>>
+            {
+                new List<Matrix4x4>(maxCount)
+            };
             rotation = prefab.transform.rotation;
             scale = prefab.transform.localScale;
             this.maxCount = maxCount;
@@ -56,6 +58,7 @@ namespace GamePackages.Core
         public void RemoveAll()
         {
             matrices.Clear();
+            matrices.Add(new List<Matrix4x4>(maxCount));
         }
 
 
