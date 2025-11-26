@@ -1,32 +1,16 @@
-﻿using System;
+﻿using NaughtyAttributes;
 using System.Collections.Generic;
-using NaughtyAttributes;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace GamePackages.Core
 {
-    public class GpuInstancer : MonoBehaviour
+    public class GpuInstancer
     {
-        [NonSerialized] Dictionary<GameObject, GpuInstancerGroup> prefabToPool = new Dictionary<GameObject, GpuInstancerGroup>();
+        Dictionary<GameObject, GpuInstancerGroup> prefabToPool = new Dictionary<GameObject, GpuInstancerGroup>();
 
-        int maxCount;
-
-        static GpuInstancer inst;
-        public static GpuInstancer GetInst(int maxCount)
-        {
-            if (!inst)
-            {
-                GameObject go = new GameObject("GpuInstancingDynamicObjectPool");
-                go.hideFlags = HideFlags.DontSave;
-                inst = go.AddComponent<GpuInstancer>();
-                inst.maxCount = maxCount;
-                go.SetActive(false);
-            }
-
-            return inst;
-        }
+        const int maxCount = 1023;
 
         public void Add(GameObject prefab, Vector3 position)
         {
