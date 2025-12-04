@@ -1,6 +1,5 @@
 ﻿using NaughtyAttributes;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -12,16 +11,16 @@ namespace GamePackages.Core
 
         const int maxCount = 1023;
 
-        public void Add(GameObject prefab, Vector3 position)
+        public void Add(GpuInstancerUnit prefab, Vector3 position)
         {
-            Assert.IsNotNull(prefab);
-            if (!prefabToPool.TryGetValue(prefab, out GpuInstancerGroup pool))
+            Assert.IsNotNull(prefab.prefab);
+            if (!prefabToPool.TryGetValue(prefab.prefab, out GpuInstancerGroup pool))
             {
 #if UNITY_EDITOR
-                Assert.IsFalse(string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(prefab)), $"Объект '{prefab.name}' должен быть ассетом");
+                //Assert.IsFalse(string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(prefab)), $"Объект '{prefab.name}' должен быть ассетом");
 #endif
                 pool = new GpuInstancerGroup(prefab, maxCount);
-                prefabToPool.Add(prefab, pool);
+                prefabToPool.Add(prefab.prefab, pool);
             }
 
             pool.AddObject(position);

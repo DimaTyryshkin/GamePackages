@@ -5,35 +5,50 @@ using UnityEngine.Assertions;
 
 namespace GamePackages.Core
 {
+    public struct GpuInstancerUnit
+    {
+        public GameObject prefab;
+        public Mesh mesh;
+        public Material material;
+        public Quaternion prefabRotation;
+        public Vector3 prefabScale;
+    }
+
     internal class GpuInstancerGroup
     {
         readonly GameObject prefab;
         readonly Mesh mesh;
         readonly Material material;
-        readonly MaterialPropertyBlock propertyBlock;
         readonly List<List<Matrix4x4>> matrices;
         readonly Quaternion rotation;
         readonly Vector3 scale;
         readonly int maxCount;
 
+        MaterialPropertyBlock propertyBlock;
+
         public int ActualCount => matrices.Sum(x => x.Count);
 
         public GameObject Prefab => prefab;
 
-        public GpuInstancerGroup(GameObject prefab, int maxCount)
+        public GpuInstancerGroup(GpuInstancerUnit prefab, int maxCount)
         {
-            Assert.IsNotNull(prefab);
-            this.prefab = prefab;
-            mesh = prefab.GetComponent<MeshFilter>().sharedMesh;
-            material = prefab.GetComponent<MeshRenderer>().sharedMaterial;
-            propertyBlock = new MaterialPropertyBlock();
+            Assert.IsNotNull(prefab.prefab);
+            this.prefab = prefab.prefab;
+            mesh = prefab.mesh;// prefab.GetComponent<MeshFilter>().sharedMesh;
+            material = prefab.material;// prefab.GetComponent<MeshRenderer>().sharedMaterial;
+            //propertyBlock = new MaterialPropertyBlock();
             matrices = new List<List<Matrix4x4>>
             {
                 new List<Matrix4x4>(maxCount)
             };
-            rotation = prefab.transform.rotation;
-            scale = prefab.transform.localScale;
+            rotation = prefab.prefabRotation;// prefab.transform.rotation;
+            scale = prefab.prefabScale;// prefab.transform.localScale;
             this.maxCount = maxCount;
+
+        }
+
+        public void InitFromMainThread() // TODO
+        {
             Assert.IsTrue(material.enableInstancing);
         }
 
@@ -66,6 +81,9 @@ namespace GamePackages.Core
         {
             if (matrices.Count == 0)
                 return;
+
+            if (propertyBlock == null)
+                propertyBlock = new MaterialPropertyBlock();
 
             // Отрисовываем все кубы за один вызов с помощью GPU Instancing
             foreach (var list in matrices)
