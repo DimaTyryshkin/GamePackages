@@ -1,15 +1,14 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace GamePackages.Core.Editor
 {
     public class TextureDrawer
     {
-        int scale = 1;
+        public int scale = 1;
+        public Vector2 offset;
         bool isDrag;
         int maxScale = 16;
-        Vector2 offset;
         Rect texCoords;
         Rect viewRect;
         Texture2D texture;
@@ -20,13 +19,17 @@ namespace GamePackages.Core.Editor
             this.texture = texture;
         }
 
-        public void Draw(int maxWidth = 0, int maxHeight = 0)
+        public void Draw(
+            float maxWidth, float maxHeight,
+            float minWidth, float minHeight)
         {
             GUILayout.BeginVertical();
             {
                 //Assert.IsNull(texture);
                 //Vector2Int size = GUILayoutExtension.GetTextureSize(texture.width, texture.height, asset.maxWidthOnGui, 0);
-                Vector2Int size = GUILayoutExtension.GetTextureSize(texture.width, texture.height, maxWidth, maxHeight);
+                Vector2Int size = GUILayoutExtension.GetTextureSize(texture.width, texture.height, maxWidth, maxHeight, minWidth, minHeight);
+                float defaultScale = size.x / (float)texture.width;
+
                 GUILayoutOption width = GUILayout.Width(size.x);
                 viewRect = GUILayoutUtility.GetRect(0, 0, width, GUILayout.Height(size.y));
 
@@ -47,8 +50,8 @@ namespace GamePackages.Core.Editor
                     {
                         isDrag = true;
                         Vector2 delta = Event.current.delta;
-                        delta.x *= -1f / (texture.width * scale);
-                        delta.y *= 1f / (texture.height * scale);
+                        delta.x *= -1f / (texture.width * scale * defaultScale);
+                        delta.y *= 1f / (texture.height * scale * defaultScale);
                         offset += delta;
 
                         Event.current.Use();
@@ -89,13 +92,6 @@ namespace GamePackages.Core.Editor
                         texture.Apply();
                     }
                 }
-
-
-                GUILayout.BeginHorizontal();
-                {
-                    scale = EditorGUILayout.IntSlider(scale, 1, maxScale, width);
-                }
-                GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();
         }
@@ -123,6 +119,11 @@ namespace GamePackages.Core.Editor
         {
             float textCoordsSize = 1f / scale;
             texCoords = new Rect(offset.x, offset.y, textCoordsSize, textCoordsSize);
+        }
+
+        public void SetTexture(Texture2D texture)
+        {
+            this.texture = texture;
         }
     }
 
