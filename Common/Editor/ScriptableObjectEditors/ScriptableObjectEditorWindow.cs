@@ -20,7 +20,7 @@ namespace GamePackages.Core.ScriptableObjectEditors.Editor
 
         protected static bool OnOpenAssetInternal(int instanceId)
         {
-            AssetT asset = EditorUtility.InstanceIDToObject(instanceId) as AssetT;
+            AssetT asset = EditorUtility.EntityIdToObject(instanceId) as AssetT;
             if (asset && AssetDatabase.Contains(asset))
             {
                 Open(asset);
