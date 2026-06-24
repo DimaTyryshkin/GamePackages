@@ -1,9 +1,11 @@
-﻿using System;
+﻿using GamePackages.Localization.LocalizationWorkflow;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using GamePackages.Localization.LocalizationWorkflow;
-using UnityEngine;
+using System.Linq;
 using UnityEditor;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace GamePackages.Localization
@@ -13,9 +15,9 @@ namespace GamePackages.Localization
         [MenuItem("SiberianWellness/Localization/Test2")]
         public static void Test2()
         {
-            var      a    = Resources.Load<TextAsset>("Localization/Files/Locations");
-            var      path = AssetDatabase.GetAssetPath(a);
-            FileInfo f    = new FileInfo(path);
+            var a = Resources.Load<TextAsset>("Localization/Files/Locations");
+            var path = AssetDatabase.GetAssetPath(a);
+            FileInfo f = new FileInfo(path);
             Debug.Log(f.Extension);                 //".txt"
             Debug.Log(path);                        //"Assets\folder\file.txt";
             Debug.Log(Path.GetDirectoryName(path)); // "Assets\folder"
@@ -29,7 +31,7 @@ namespace GamePackages.Localization
 
             foreach (var f in allFiles)
             {
-                StringWriter w= new StringWriter();
+                StringWriter w = new StringWriter();
                 f.Write(w);
                 Debug.Log(w.ToString());
             }
@@ -37,36 +39,36 @@ namespace GamePackages.Localization
 
         [MenuItem("SiberianWellness/Localization/RewriteAllLocalizedFiles")]
         public static void RewriteAllLocalizedFiles()
-        { 
-            
+        {
+
             Workflow.RewriteAllLocalizedFiles();
-        } 
-        
+        }
+
         [MenuItem("SiberianWellness/Localization/MergeSelectedFilesAndOriginFiles")]
         public static void MergeSelectedFilesAndOriginFiles()
-        {    
+        {
             Workflow.MergeSelectedFilesAndOriginFiles();
         }
 
         [MenuItem("SiberianWellness/Localization/Save empty text blocks")]
         public static void SaveEmptyTextBlocks()
-        { 
+        {
             var allFiles = Workflow.LoadAllLocalizedFilesInProject();
             Workflow.ExtractVoidTextBlocksAndSaveToFiles(allFiles);
         }
-}
+    }
 
     public class LocalizationEditorMenu
     {
         [MenuItem("SiberianWellness/Localization/Reload ")]
         public static void Reload()
-        {  
-            Debug.Log("Reload"); 
+        {
+            Debug.Log("Reload");
             LocalizationFacade.Reload();
 
             Workflow.LoadAllLocalizedFilesInProject();//Вызывает проверку допустимых символов
         }
- 
+
         [MenuItem("SiberianWellness/Localization/Ru ")]
         public static void Ru()
         {
@@ -91,33 +93,33 @@ namespace GamePackages.Localization
         {
             LocalizationSettings.SetLanguage(LocalizationSettings.Cn);
             Reload();
-            
+
             ReDrawCanwas();
         }
-        
+
         [MenuItem("SiberianWellness/Localization/GetFilesFromServer ")]
         public static void GetFilesFromServer()
         {
-//            WebClient myWebClient = new WebClient();
-//            string path = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "Resources", "Localization", "Files");
-//            Debug.Log(path);
-//            myWebClient.DownloadFile("http://192.168.3.11/gameplay.csv", Path.Combine(path, "gameplay.csv"));
+            //            WebClient myWebClient = new WebClient();
+            //            string path = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "Resources", "Localization", "Files");
+            //            Debug.Log(path);
+            //            myWebClient.DownloadFile("http://192.168.3.11/gameplay.csv", Path.Combine(path, "gameplay.csv"));
 
             string localizationFolder = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "Resources", "Localization", "Files");
             string appPath = Path.Combine(Directory.GetCurrentDirectory(), "GetLocalizationApp", "GoogleSheetsQuickstart", "bin", "Debug");
             Debug.Log(" <color=yellow> Скачивание файлов </color> ");
-            
+
             Process process = new Process();
-            process.StartInfo.FileName               = Path.Combine(appPath, "GoogleSheetsQuickstart.exe");
-            process.StartInfo.UseShellExecute        = false;
+            process.StartInfo.FileName = Path.Combine(appPath, "GoogleSheetsQuickstart.exe");
+            process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError  = true;
+            process.StartInfo.RedirectStandardError = true;
             process.StartInfo.WorkingDirectory = appPath;
-            
+
             process.Start();
             string output = process.StandardOutput.ReadToEnd();
-            Debug.Log("Консольный вывод приложения:"+ Environment.NewLine + output);
+            Debug.Log("Консольный вывод приложения:" + Environment.NewLine + output);
             string err = process.StandardError.ReadToEnd();
             Debug.Log("Ошибки: " + err);
             process.WaitForExit();
@@ -148,7 +150,7 @@ namespace GamePackages.Localization
                     }
                 }
                 Debug.Log("folder: " + folderName + " Name: " + fileName);
-                
+
                 string fullPathInUnity = Path.Combine(localizationFolder, folderName);
                 if (!File.Exists(fullPathInUnity))
                 {
@@ -161,16 +163,16 @@ namespace GamePackages.Localization
                 }
                 File.Move(pathInApp, fullPathInUnity);
             }
-            
+
             //AssetStoreToolUtils.UpdatePreloadingInternal();
-            LocalizationFacade.Reload(); 
+            LocalizationFacade.Reload();
             Debug.Log(" <color=green> Скачивание файлов завершено </color> ");
         }
 
         static void ReDrawCanwas()
         {
-            var canvasRoots = GameObject.FindObjectsOfType<Canvas>();
-            foreach (var c in canvasRoots)
+            IEnumerable<Canvas> canvasRoots = GameObject.FindObjectsByType(typeof(Canvas)).Cast<Canvas>();
+            foreach (Canvas c in canvasRoots)
             {
                 c.gameObject.SetActive(false);
                 c.gameObject.SetActive(true);

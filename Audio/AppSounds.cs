@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using GamePackages.Core;
+﻿using GamePackages.Core;
 using GamePackages.Core.Validation;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -11,11 +11,11 @@ namespace GamePackages.Audio
     {
         readonly SoundGroupSettings settings;
         SoundSetPlayer oldPlayer;
-        
+
         public float timeNextPlay;
 
         public SoundGroup(SoundGroupSettings settings)
-        { 
+        {
             this.settings = settings;
         }
 
@@ -36,7 +36,7 @@ namespace GamePackages.Audio
     }
 
     public class AppSounds : MonoBehaviour
-    { 
+    {
         public static float Volume
         {
             get { return instScene.data.Volume; }
@@ -46,7 +46,7 @@ namespace GamePackages.Audio
                 VolumeChanged?.Invoke();
             }
         }
-        
+
         public static float MusicVolume
         {
             get => instScene.data.MusicVolume;
@@ -70,32 +70,34 @@ namespace GamePackages.Audio
 
         public static event UnityAction VolumeChanged;
 
-        
+
         [SerializeField, IsntNull] AppSoundsSettings appSoundsSettings;
         [SerializeField, IsntNull] SoundSetPlayer soundPlayerPrefab;
-        
+
         static AppSounds instScene;
         static AppSounds instDontDestroyOnLoad;
         AppAudioAccountData data;
-        
+
         Pool<SoundSetPlayer> pool;
+
+        [System.NonSerialized]
         public Dictionary<string, SoundGroup> soundGroups;
-  
+
         public static void SetAsSceneSound(AppSounds appSounds)
-        { 
-            instScene = appSounds; 
+        {
+            instScene = appSounds;
         }
-        
+
         public static void SetAsDontDestroyOnLoadAppSounds(AppSounds appSounds)
-        { 
-            instDontDestroyOnLoad = appSounds; 
+        {
+            instDontDestroyOnLoad = appSounds;
         }
-        
+
         public void Init(AppAudioAccountData data)
         {
             Assert.IsNotNull(data);
 
-            this.data = data;  
+            this.data = data;
             pool = new Pool<SoundSetPlayer>(transform, soundPlayerPrefab);
             pool.FillPool(32);
 
@@ -117,14 +119,14 @@ namespace GamePackages.Audio
 
             return soundPlayer;
         }
-         
+
         public static void Play(SoundsSet soundSet)
         {
             GetSoundPlayer(soundSet).Play();
         }
 
         public void ReturnToPool(SoundSetPlayer soundPlayer)
-        { 
+        {
             pool.ReturnToPool(soundPlayer);
         }
 
