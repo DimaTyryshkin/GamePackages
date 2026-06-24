@@ -180,11 +180,6 @@ namespace GamePackages.Core
             return UnityEngine.Random.Range(0, list.Count);
         }
 
-        public static T Last<T>(this IList<T> list)
-        {
-            return list[list.Count - 1];
-        }
-
         /// <summary>
         /// Shuffles the specified list.
         /// </summary> 
@@ -216,12 +211,15 @@ namespace GamePackages.Core
             return result;
         }
 
-        public static T MinItem<T>(this IList<T> collection, Func<T, float> selector)
+        public static T MinItem<T>(this IList<T> collection, Func<T, float> selector, int count = -1)
         {
+            if (count < 0)
+                count = collection.Count;
+
             int minIndex = 0;
             float minValue = selector(collection[0]);
 
-            for (int i = 1; i < collection.Count; i++)
+            for (int i = 1; i < count; i++)
             {
                 float value = selector(collection[i]);
                 if (value < minValue)
@@ -234,12 +232,15 @@ namespace GamePackages.Core
             return collection[minIndex];
         }
 
-        public static T MaxItem<T>(this IList<T> collection, Func<T, float> selector)
+        public static T MaxItem<T>(this IList<T> collection, Func<T, float> selector, int count = -1)
         {
+            if (count < 0)
+                count = collection.Count;
+
             int maxIndex = 0;
             float maxValue = selector(collection[0]);
 
-            for (int i = 1; i < collection.Count; i++)
+            for (int i = 1; i < count; i++)
             {
                 float value = selector(collection[i]);
                 if (value > maxValue)
@@ -252,15 +253,10 @@ namespace GamePackages.Core
             return collection[maxIndex];
         }
 
-        public static int MinIndex<T>(this IList<T> collection, Func<T, float> selector)
+        public static int MinIndex<T>(this IList<T> collection, Func<T, float> selector, int count = -1)
         {
-            return MinIndex(collection, selector, collection.Count);
-        }
-
-        public static int MinIndex<T>(this IList<T> collection, Func<T, float> selector, int count)
-        {
-            if (count == 0)
-                return -1;
+            if (count < 0)
+                count = collection.Count;
 
             int minIndex = 0;
             float minValue = selector(collection[0]);
@@ -278,16 +274,10 @@ namespace GamePackages.Core
             return minIndex;
         }
 
-
-        public static int MaxIndex<T>(this IList<T> collection, Func<T, float> selector)
+        public static int MaxIndex<T>(this IList<T> collection, Func<T, float> selector, int count = -1)
         {
-            return MaxIndex(collection, selector, collection.Count);
-        }
-
-        public static int MaxIndex<T>(this IList<T> collection, Func<T, float> selector, int count)
-        {
-            if (count == 0)
-                return -1;
+            if (count < 0)
+                count = collection.Count;
 
             int maxIndex = 0;
             float maxValue = selector(collection[0]);
@@ -315,7 +305,6 @@ namespace GamePackages.Core
 
     public static class IEnumerableExtension
     {
-
         public static T FirstOrDefault<T>(IEnumerable<T> collection, Predicate<T> predicate) where T : class
         {
             foreach (var element in collection)
