@@ -2,6 +2,8 @@
 using GamePackages.Core.Validation;
 using UnityEngine;
 
+
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -22,7 +24,7 @@ namespace GamePackages.Core
             get
             {
                 if (!inst)
-                    inst = FindObjectOfType<GizmosDrawer>();
+                    inst = FindAnyObjectByType<GizmosDrawer>();
 
                 return inst;
             }
@@ -84,7 +86,7 @@ namespace GamePackages.Core
 
         public GizmosArrow AddArrow(Vector3 p1, Vector3 p2, bool isXY = true)
         {
-            var figure = new GizmosArrow(p1, p2, isXY);
+            GizmosArrow figure = new GizmosArrow(p1, p2, isXY);
             AddFigure(figure);
             return figure;
         }
@@ -96,9 +98,12 @@ namespace GamePackages.Core
             return figure;
         }
 
-        public GizmosText AddText(Vector3 p1, string text)
+
+        public GizmosText AddText<T>(Vector3 position, T obj) => AddText(position, obj.ToString());
+
+        public GizmosText AddText(Vector3 position, string text)
         {
-            var figure = new GizmosText(p1, text);
+            var figure = new GizmosText(position, text);
             AddFigure(figure);
             return figure;
         }
@@ -106,14 +111,26 @@ namespace GamePackages.Core
         public abstract class GizmosFigure
         {
             public float timeDeath;
+            public Color color;
 
             public float Duration
             {
                 set => timeDeath = Time.realtimeSinceStartup + value;
             }
 
-            public Color color;
             public abstract void Draw();
+
+            public GizmosFigure SetDuration(float duration)
+            {
+                timeDeath = Time.realtimeSinceStartup + duration;
+                return this;
+            }
+
+            public GizmosFigure SetColor(Color color)
+            {
+                this.color = color;
+                return this;
+            }
         }
 
         public class GizmosArrow : GizmosFigure
@@ -158,19 +175,19 @@ namespace GamePackages.Core
 
         public class GizmosText : GizmosFigure
         {
-            public Vector3 p1;
+            public Vector3 position;
             public string text;
 
             public GizmosText(Vector3 p1, string text)
             {
-                this.p1 = p1;
+                this.position = p1;
                 this.text = text;
             }
 
             public override void Draw()
             {
 #if UNITY_EDITOR
-                Handles.Label(p1, text);
+                Handles.Label(position, text);
 #endif
             }
         }

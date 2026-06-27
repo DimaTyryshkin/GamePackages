@@ -1,6 +1,6 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -21,7 +21,7 @@ namespace GamePackages.Core
         public static Rect TransformRect(this Transform t, Rect rect)
         {
             Vector2 start = t.TransformPoint(rect.position);
-            Vector2 end   = t.TransformPoint(rect.max);
+            Vector2 end = t.TransformPoint(rect.max);
 
             Vector2 size = end - start;
 
@@ -31,7 +31,7 @@ namespace GamePackages.Core
         public static string PrintChildren(this Transform transform)
         {
             string s = "";
-            int    n = 0;
+            int n = 0;
             foreach (Transform t in transform)
             {
                 s += $"({n}) {t.gameObject.name}" + Environment.NewLine;
@@ -84,11 +84,11 @@ namespace GamePackages.Core
 
         public static GameObject InstantiateAsChildAndSaveLocalTransform(this Transform parent, GameObject childPrefab)
         {
-            var       childGo = Object.Instantiate(childPrefab);
-            Transform child   = childGo.transform;
+            var childGo = Object.Instantiate(childPrefab);
+            Transform child = childGo.transform;
             child.SetParent(parent);
 
-            child.localScale    = childPrefab.transform.localScale;
+            child.localScale = childPrefab.transform.localScale;
             child.localRotation = childPrefab.transform.localRotation;
             child.localPosition = childPrefab.transform.localPosition;
             return childGo;
@@ -118,7 +118,7 @@ namespace GamePackages.Core
                     Debug.LogError("Infinity loop");
                     break;
                 }
-                
+
 #if UNITY_EDITOR
                 if (!Application.isPlaying)
                 {
@@ -127,7 +127,7 @@ namespace GamePackages.Core
                 }
 #endif
                 Object.DestroyImmediate(transform.GetChild(0).gameObject);
-               
+
             }
         }
 
@@ -158,7 +158,7 @@ namespace GamePackages.Core
                     if (result)
                         return result;
                 }
-            } 
+            }
 
             return null;
         }
@@ -176,7 +176,7 @@ namespace GamePackages.Core
             }
 
             return null;
-        }   
+        }
     }
 
     public static class TransformSetterWrapper

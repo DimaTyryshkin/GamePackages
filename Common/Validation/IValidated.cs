@@ -1,7 +1,7 @@
 namespace GamePackages.Core.Validation
 {
-	public interface IValidated
-	{
-		void Validate(ValidationContext context);
-	}
+    public interface IValidated
+    {
+        void Validate(ValidationContext context);
+    }
 }

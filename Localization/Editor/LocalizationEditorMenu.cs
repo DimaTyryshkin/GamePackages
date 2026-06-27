@@ -12,7 +12,7 @@ namespace GamePackages.Localization
 {
     public static class EmptyStringPrinter
     {
-        [MenuItem("SiberianWellness/Localization/Test2")]
+        [MenuItem("GamePackages/Localization/Test2")]
         public static void Test2()
         {
             var a = Resources.Load<TextAsset>("Localization/Files/Locations");
@@ -24,7 +24,7 @@ namespace GamePackages.Localization
 
         }
 
-        [MenuItem("SiberianWellness/Localization/Test")]
+        [MenuItem("GamePackages/Localization/Test")]
         public static void Test()
         {
             var allFiles = Workflow.LoadAllSelectionLocalizedFiles();
@@ -37,20 +37,20 @@ namespace GamePackages.Localization
             }
         }
 
-        [MenuItem("SiberianWellness/Localization/RewriteAllLocalizedFiles")]
+        [MenuItem("GamePackages/Localization/RewriteAllLocalizedFiles")]
         public static void RewriteAllLocalizedFiles()
         {
 
             Workflow.RewriteAllLocalizedFiles();
         }
 
-        [MenuItem("SiberianWellness/Localization/MergeSelectedFilesAndOriginFiles")]
+        [MenuItem("GamePackages/Localization/MergeSelectedFilesAndOriginFiles")]
         public static void MergeSelectedFilesAndOriginFiles()
         {
             Workflow.MergeSelectedFilesAndOriginFiles();
         }
 
-        [MenuItem("SiberianWellness/Localization/Save empty text blocks")]
+        [MenuItem("GamePackages/Localization/Save empty text blocks")]
         public static void SaveEmptyTextBlocks()
         {
             var allFiles = Workflow.LoadAllLocalizedFilesInProject();
@@ -60,7 +60,7 @@ namespace GamePackages.Localization
 
     public class LocalizationEditorMenu
     {
-        [MenuItem("SiberianWellness/Localization/Reload ")]
+        [MenuItem("GamePackages/Localization/Reload ")]
         public static void Reload()
         {
             Debug.Log("Reload");
@@ -69,7 +69,7 @@ namespace GamePackages.Localization
             Workflow.LoadAllLocalizedFilesInProject();//Вызывает проверку допустимых символов
         }
 
-        [MenuItem("SiberianWellness/Localization/Ru ")]
+        [MenuItem("GamePackages/Localization/Ru ")]
         public static void Ru()
         {
             LocalizationSettings.SetLanguage(LocalizationSettings.Ru);
@@ -79,7 +79,7 @@ namespace GamePackages.Localization
             ReDrawCanwas();
         }
 
-        [MenuItem("SiberianWellness/Localization/En ")]
+        [MenuItem("GamePackages/Localization/En ")]
         public static void En()
         {
             LocalizationSettings.SetLanguage(LocalizationSettings.En);
@@ -88,7 +88,7 @@ namespace GamePackages.Localization
             ReDrawCanwas();
         }
 
-        [MenuItem("SiberianWellness/Localization/Cn ")]
+        [MenuItem("GamePackages/Localization/Cn ")]
         public static void Cn()
         {
             LocalizationSettings.SetLanguage(LocalizationSettings.Cn);
@@ -97,7 +97,7 @@ namespace GamePackages.Localization
             ReDrawCanwas();
         }
 
-        [MenuItem("SiberianWellness/Localization/GetFilesFromServer ")]
+        [MenuItem("GamePackages/Localization/GetFilesFromServer ")]
         public static void GetFilesFromServer()
         {
             //            WebClient myWebClient = new WebClient();

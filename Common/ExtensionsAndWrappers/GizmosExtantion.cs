@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR && !NO_EDITOR_CODE
+using System;
 using UnityEditor;
-#endif
+using UnityEngine;
 
 namespace GamePackages.Core
 {
@@ -65,22 +64,53 @@ namespace GamePackages.Core
             Gizmos.DrawWireCube(bounds.center, bounds.size);
         }
 
-        public static void DrawLines(Vector3[] points, float pointRadius = 0)
+        public static void DrawLines(Vector3[] points, float pointRadius = 0) => DrawLines(points, p => p, pointRadius);
+        public static void DrawLines(Vector2[] points, float pointRadius = 0) => DrawLines(points, p => (Vector3)p, pointRadius);
+        public static void DrawLines(Transform[] points, float pointRadius = 0) => DrawLines2(points, p => p.position, pointRadius);
+
+
+        public static void DrawLines<T>(T[] points, Func<T, Vector3> getPos, float pointRadius = 0)
+           where T : struct
         {
+            if (points == null)
+                return;
+
             for (int i = 1; i < points.Length; i++)
             {
-                Gizmos.DrawLine(points[i - 1], points[i]);
+                Gizmos.DrawLine(getPos(points[i - 1]), getPos(points[i]));
             }
 
             if (pointRadius > 0)
             {
                 for (int i = 0; i < points.Length; i++)
                 {
-#if UNITY_EDITOR
-                    Handles.DrawWireDisc(points[i], Vector3.up, pointRadius);
-#endif
+                    Handles.DrawWireDisc(getPos(points[i]), Vector3.up, pointRadius);
+                }
+            }
+        }
+
+        public static void DrawLines2<T>(T[] points, Func<T, Vector3> getPos, float pointRadius = 0)
+            where T : UnityEngine.Object
+        {
+            if (points == null)
+                return;
+
+            for (int i = 1; i < points.Length; i++)
+            {
+                if (!points[i - 1] || !points[i])
+                    return;
+
+                Gizmos.DrawLine(getPos(points[i - 1]), getPos(points[i]));
+            }
+
+            if (pointRadius > 0)
+            {
+                for (int i = 0; i < points.Length; i++)
+                {
+                    Handles.DrawWireDisc(getPos(points[i]), Vector3.up, pointRadius);
                 }
             }
         }
     }
 }
+#endif
