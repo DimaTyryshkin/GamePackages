@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,27 +12,34 @@ namespace GamePackages.InputSystem
         GraphicRaycaster[] graphicRaycasters;
 
         List<RaycastResult> objectUnderPointer = new List<RaycastResult>();
-        bool                isGuiUnderPointer  = false;
-        bool                valueCalculated    = true; //Пропускаем первый кадр
+        bool isGuiUnderPointer = false;
+        bool valueCalculated = true; //Пропускаем первый кадр
 
+        [Obsolete]
         public bool IsGuiUnderPointer
         {
             get
             {
-                HitGraphic();
+                HitGraphic(Input.mousePosition);
                 return isGuiUnderPointer;
             }
         }
 
-        void HitGraphic()
+        public bool IsGuiUnderMouse(Vector2 mousePos)
+        {
+            HitGraphic(mousePos);
+            return isGuiUnderPointer;
+        }
+
+        void HitGraphic(Vector2 mousePos)
         {
             if (valueCalculated == false)
             {
                 isGuiUnderPointer = false;
-                valueCalculated   = true;
+                valueCalculated = true;
 
                 PointerEventData pointEvent = new PointerEventData(null);
-                pointEvent.position = Input.mousePosition;
+                pointEvent.position = mousePos;
 
                 foreach (var raycaster in graphicRaycasters)
                 {

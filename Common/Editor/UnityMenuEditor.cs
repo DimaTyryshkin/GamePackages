@@ -1,4 +1,3 @@
-using System;
 using GamePackages.Core.Validation;
 using UnityEditor;
 using UnityEngine;
@@ -31,7 +30,7 @@ namespace GamePackages.Core.Editor
                 else
                     newName = component.GetType().Name;
 
-                newName = Char.ToLower(newName[0]) + newName.Substring(1);
+                //newName = Char.ToLower(newName[0]) + newName.Substring(1);
                 go.RenameInEditor(newName);
             }
         }

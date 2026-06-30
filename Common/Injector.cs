@@ -19,7 +19,14 @@ namespace GamePackages.Core
             Add(this);
         }
 
-        public void Add<T>(T value) where T : class
+        public T AddInject<T>(T value) where T : class
+        {
+            Add(value);
+            Inject(value);
+            return value;
+        }
+
+        public T Add<T>(T value) where T : class
         {
             Assert.IsNotNull(value);
 
@@ -27,16 +34,20 @@ namespace GamePackages.Core
                 throw new Exception($"Value for type '{nameof(T)}' already registered");
 
             values[typeof(T)] = value;
+
+            return value;
         }
 
-        public void Resolve<T>(T obj) where T : class
+        public T Inject<T>(T obj) where T : class
         {
             Assert.IsNotNull(obj);
             ResolveFields(obj);
             ResolveProperties(obj);
+
+            return obj;
         }
 
-        public void ResolveFields<T>(T obj)
+        private void ResolveFields<T>(T obj)
         {
             FieldInfo[] fields = obj
                 .GetType()
@@ -61,7 +72,7 @@ namespace GamePackages.Core
             }
         }
 
-        public void ResolveProperties<T>(T obj)
+        private void ResolveProperties<T>(T obj)
         {
             var properties = obj
                 .GetType()
