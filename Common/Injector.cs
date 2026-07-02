@@ -16,17 +16,17 @@ namespace GamePackages.Core
 
         public Injector()
         {
-            Add(this);
+            Register(this);
         }
 
-        public T AddInject<T>(T value) where T : class
+        public T RegisterAndInject<T>(T value, params object[] parameters) where T : class
         {
-            Add(value);
-            Inject(value);
+            Register(value);
+            Inject(value, parameters);
             return value;
         }
 
-        public T Add<T>(T value) where T : class
+        public T Register<T>(T value) where T : class
         {
             Assert.IsNotNull(value);
 
@@ -38,16 +38,16 @@ namespace GamePackages.Core
             return value;
         }
 
-        public T Inject<T>(T obj) where T : class
+        public T Inject<T>(T obj, params object[] parameters) where T : class
         {
             Assert.IsNotNull(obj);
-            ResolveFields(obj);
+            ResolveFields(obj, parameters);
             ResolveProperties(obj);
 
             return obj;
         }
 
-        private void ResolveFields<T>(T obj)
+        private void ResolveFields<T>(T obj, object[] parameters)
         {
             FieldInfo[] fields = obj
                 .GetType()
@@ -61,16 +61,51 @@ namespace GamePackages.Core
                 if (injectAttrribute == null)
                     continue;
 
-                if (values.TryGetValue(field.FieldType, out var injectValue))
+                if (parameters is not null)
                 {
-                    field.SetValue(obj, injectValue);
+                    object injectValue1 = GetByType(field.FieldType, parameters);
+                    if (injectValue1 is not null)
+                    {
+                        field.SetValue(obj, injectValue1);
+                        continue;
+                    }
                 }
-                else
+
+                if (values.TryGetValue(field.FieldType, out var injectValue2))
                 {
-                    throw new Exception($"Value for inject not found. Type: <B>{field.FieldType.Name}</B> Member: <b>{field.DeclaringType.Name}.{field.Name}</b>");
+
+                    field.SetValue(obj, injectValue2);
+                    continue;
+                }
+
+                throw new Exception($"Value of type '<b>{field.FieldType.Name}</b>' not found for inject in member '<b>{field.DeclaringType.Name}.{field.Name}</b>'");
+            }
+
+            if (parameters is not null)
+            {
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    if (parameters[i] is not null)
+                        throw new Exception($"Parameter[{i}] with type '{parameters[i].GetType().Name}' was not used in inject to <b>{obj.GetType().Name}</b>");
                 }
             }
         }
+
+        private object GetByType(Type type, object[] parameters)
+        {
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                object item = parameters[i];
+                if (item is not null && item.GetType() == type)
+                {
+                    parameters[i] = null;
+                    return item;
+                }
+            }
+
+            return null;
+        }
+
 
         private void ResolveProperties<T>(T obj)
         {
