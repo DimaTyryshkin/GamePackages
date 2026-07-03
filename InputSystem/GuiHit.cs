@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace GamePackages.InputSystem
@@ -15,39 +15,34 @@ namespace GamePackages.InputSystem
         bool isGuiUnderPointer = false;
         bool valueCalculated = true; //Пропускаем первый кадр
 
-        [Obsolete]
         public bool IsGuiUnderPointer
         {
             get
             {
-                HitGraphic(Input.mousePosition);
+                if (valueCalculated)
+                    return isGuiUnderPointer;
+
+                isGuiUnderPointer = HitGraphic();
+                valueCalculated = true;
                 return isGuiUnderPointer;
             }
         }
 
-        public bool IsGuiUnderMouse(Vector2 mousePos)
+        bool HitGraphic()
         {
-            HitGraphic(mousePos);
-            return isGuiUnderPointer;
-        }
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            PointerEventData pointEvent = new PointerEventData(null);
+            pointEvent.position = mousePos;
 
-        void HitGraphic(Vector2 mousePos)
-        {
-            if (valueCalculated == false)
+            foreach (var raycaster in graphicRaycasters)
             {
-                isGuiUnderPointer = false;
-                valueCalculated = true;
-
-                PointerEventData pointEvent = new PointerEventData(null);
-                pointEvent.position = mousePos;
-
-                foreach (var raycaster in graphicRaycasters)
-                {
-                    objectUnderPointer.Clear();
-                    raycaster.Raycast(pointEvent, objectUnderPointer);
-                    isGuiUnderPointer = isGuiUnderPointer || objectUnderPointer.Count > 0;
-                }
+                objectUnderPointer.Clear();
+                raycaster.Raycast(pointEvent, objectUnderPointer);
+                if (objectUnderPointer.Count > 0)
+                    return true;
             }
+
+            return false;
         }
 
         void LateUpdate()
