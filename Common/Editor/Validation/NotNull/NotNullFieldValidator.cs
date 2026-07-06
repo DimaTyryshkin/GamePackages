@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
-using Object = UnityEngine.Object;
+
 #if UNITY_EDITOR
 using UnityEditor;
-#endif
+#endif 
 
 namespace GamePackages.Core.Validation
 {
@@ -14,12 +14,12 @@ namespace GamePackages.Core.Validation
         int missingScriptValidationCount;
 
         public override int TotalValidationCount => isntNullValidationCount + missingScriptValidationCount;
-        
+
         public NotNullFieldValidator()
         {
-            
+
         }
-        
+
         static bool IsSimilarToNull(object obj)
         {
             if (obj == null || obj.Equals(null))
@@ -38,29 +38,29 @@ namespace GamePackages.Core.Validation
         public override string GetStats()
         {
             return $"NotNull Validator" + Environment.NewLine +
-                   $"NotNull полезных проверок = {isntNullValidationCount}" + Environment.NewLine +
+                   $"   NotNull полезных проверок = {isntNullValidationCount}" + Environment.NewLine +
                    $"   Missing script полезных проверок = {missingScriptValidationCount}" + Environment.NewLine;
         }
 
-        public override void FindProblemsInField(object value, Type valueType, FieldInfo ownerFieldInfo, Object rootObject)
+        public override void FindProblemsInField(object value, Type valueType, FieldInfo ownerFieldInfo, UnityEngine.Object rootObject)
         {
 #if UNITY_EDITOR
-                var attribute = ownerFieldInfo.GetCustomAttribute<IsntNullAttribute>();
+            var attribute = ownerFieldInfo.GetCustomAttribute<IsntNullAttribute>();
 
-                if (attribute != null)
+            if (attribute != null)
+            {
+                isntNullValidationCount++;
+                if (IsSimilarToNull(value))
                 {
-                    isntNullValidationCount++;
-                    if (IsSimilarToNull(value))
-                    {
-                        ValidationProblem.Type type = attribute.Warring ? ValidationProblem.Type.Warning : ValidationProblem.Type.Error;
+                    ValidationProblem.Type type = attribute.Warring ? ValidationProblem.Type.Warning : ValidationProblem.Type.Error;
 
-                        RecursiveValidator.ValidationContext.AddProblem(nameof(IsntNullAttribute), type);
-                    }
+                    RecursiveValidator.ValidationContext.AddProblem(nameof(IsntNullAttribute), type);
                 }
+            }
 #endif
         }
 
-        public override void FindProblemsInObject(object value, Type valueType, Object rootObject)
+        public override void FindProblemsInObject(object value, Type valueType, UnityEngine.Object rootObject)
         {
 #if UNITY_EDITOR
             if (value is ScriptableObject so)

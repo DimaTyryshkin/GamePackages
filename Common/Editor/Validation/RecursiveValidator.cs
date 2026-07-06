@@ -25,6 +25,9 @@ namespace GamePackages.Core.Validation
             int predictedTotalUnityObjectsCount;
             DateTime timeStart;
 
+
+            public string MscorelibAssemblyFullName { get; private set; }
+
             public int ValidatedUnityObjectsCount => validatedUnityObjectsCount;
 
             public SearchScope(bool printFullInfo, int predictedTotalUnityObjectsCount)
@@ -39,6 +42,8 @@ namespace GamePackages.Core.Validation
                 timeStart = DateTime.Now;
 
                 allScanedObject = new HashSet<object>();
+
+                MscorelibAssemblyFullName = typeof(string).Assembly.FullName;
 
 #if UNITY_EDITOR
                 if (printFullInfo)
@@ -159,19 +164,14 @@ namespace GamePackages.Core.Validation
             }
         }
 
-        static bool NeedInCheck(Type type)
+        static bool NeedCheckFields(Type type)
         {
-            // Тут надо бы кешировать.
-            // А еще надо поменять принцып проверки. Проверять классы, которые сылаются на сборку с артиботами целевыми
+            string assemblyFullName = type.Assembly.FullName;
 
-            var assemblyName = type.Assembly.FullName;
+            if (assemblyFullName.StartsWith("UnityEngine."))
+                return false;
 
-            //Debug.Log(type.Name + " " + assemblyName);
-
-            if (assemblyName.StartsWith("UnityEngine."))
-                return false; //Отличное место для проверки Image.sprite
-
-            if (assemblyName.Contains("mscorlib"))
+            if (assemblyFullName == searchScope.MscorelibAssemblyFullName)
                 return false;
 
             return true;
@@ -179,11 +179,12 @@ namespace GamePackages.Core.Validation
 
         static void GetFieldsIncludeInherited(Type type, List<FieldInfo> result)
         {
-            var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            if (!NeedCheckFields(type))
+                return;
 
+            FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             result.AddRange(fields);
-            if (NeedInCheck(type.BaseType))
-                GetFieldsIncludeInherited(type.BaseType, result);
+            GetFieldsIncludeInherited(type.BaseType, result);
         }
 
         public static void ValidateRecursively(UnityEngine.Object unityObject)
@@ -215,7 +216,6 @@ namespace GamePackages.Core.Validation
                     {
                         if (!mb)
                             throw new ArgumentNullException("MonoBehaviour is null. It likely references a script that's been deleted.");
-
                         ValidateRecursively(mb, mb, null, depth);
                     }
                     catch (ArgumentNullException e)
@@ -228,17 +228,16 @@ namespace GamePackages.Core.Validation
                 return;
             }
 
-            if (!NeedInCheck(type))
-                return;
-
             validationContext.currentRoot = root;
             validationContext.currentFieldInfo = field;
-
 
             if (obj is UnityEngine.Object unityObject)
             {
                 if (unityObject is Component c)
+                {
+                    // Например, если ссылка была на компонент в префабе, то надо весь GameObject валидирвоать
                     ValidateRecursively(c.gameObject, c.gameObject, null, depth);
+                }
                 else if (unityObject is ScriptableObject so)
                 {
                     Object[] allAssetsAtPath = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(so)); // Вложенные ScriptableObject
@@ -262,7 +261,7 @@ namespace GamePackages.Core.Validation
             if (depth > maxDepth)
                 maxDepth = depth;
 
-            foreach (var v in validators)
+            foreach (AbstractValidator v in validators)
                 v.FindProblemsInObject(obj, obj?.GetType(), root);
 
             if (obj is IValidated validated)
@@ -297,7 +296,7 @@ namespace GamePackages.Core.Validation
 
                 object fieldObject = f.GetValue(obj);
 
-                foreach (var v in validators)
+                foreach (AbstractValidator v in validators)
                     v.FindProblemsInField(fieldObject, fieldObject?.GetType(), f, root);
 
                 ValidateRecursively(fieldObject, root, f, depth + 1);

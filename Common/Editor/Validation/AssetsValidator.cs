@@ -87,6 +87,7 @@ namespace GamePackages.Core.Validation
             {
                 new NotNullFieldValidator(),
                 new AsEnumFieldValidator(),
+                new UnityObjectsValidator(),
             };
         }
     }

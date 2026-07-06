@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
@@ -71,6 +72,7 @@ namespace GamePackages.Core
 
         public static T InstantiateAsChild<T>(this Transform parent, T childPrefab, bool localScaleToOne = true) where T : Component
         {
+            Assert.IsNotNull(parent);
             var childGo = Object.Instantiate(childPrefab.gameObject);
             parent.AttachChild(childGo.gameObject, localScaleToOne);
             return childGo.GetComponent<T>();
@@ -96,6 +98,7 @@ namespace GamePackages.Core
 
         public static GameObject AttachChild(this Transform parent, GameObject childGo, bool localScaleToOne = true)
         {
+            Assert.IsNotNull(parent);
             Transform child = childGo.transform;
             child.SetParent(parent);
             if (localScaleToOne)
