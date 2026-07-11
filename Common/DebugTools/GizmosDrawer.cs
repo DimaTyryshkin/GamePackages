@@ -74,7 +74,7 @@ namespace GamePackages.Core
             figures?.Clear();
         }
 
-        public DebugMarker GetMarker(Vector3 pos)
+        public DebugMarker AddMarker(Vector3 pos)
         {
             DebugMarker marker = transform.InstantiateAsChild(prefab);
             marker.gameObject.hideFlags = HideFlags.DontSave;
