@@ -336,6 +336,23 @@ namespace GamePackages.Core
             return array[rnd.Next(0, array.Length)];
         }
 
+        public static int RandomWithWeight<T>(this IList<T> array, float endNormilizedValue, Func<T, float> itemToWeigth)
+        {
+            Assert.IsNotNull(array);
+            float titalSum = array.Sum(itemToWeigth);
+            float rndValue = titalSum * endNormilizedValue;
+            float sum = 0;
+            for (int i = 0; i < array.Count; i++)
+            {
+                sum += itemToWeigth(array[i]);
+
+                if (sum >= rndValue)
+                    return i;
+            }
+
+            return array.Count - 1;
+        }
+
         public static int RandomIndex<T>(this T[] array)
         {
             return UnityEngine.Random.Range(0, array.Length);
