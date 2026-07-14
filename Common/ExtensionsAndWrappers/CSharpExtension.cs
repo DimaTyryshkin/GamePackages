@@ -344,7 +344,7 @@ namespace GamePackages.Core
             float sum = 0;
             for (int i = 0; i < array.Count; i++)
             {
-                sum += itemToWeigth(array[i]);
+                sum += Mathf.Max(0, itemToWeigth(array[i]));
 
                 if (sum >= rndValue)
                     return i;
