@@ -63,24 +63,29 @@ namespace GamePackages.Core
             return result;
         }
 
-        public static GameObject InstantiateAsChild(this Transform parent, string name, GameObject childPrefab, bool localScaleToOne = true)
-        {
-            var go = parent.InstantiateAsChild(childPrefab, localScaleToOne);
-            go.name = name;
-            return go;
-        }
-
-        public static T InstantiateAsChild<T>(this Transform parent, T childPrefab, bool localScaleToOne = true) where T : Component
+        public static T InstantiateAsChild<T>(this Transform parent, T childPrefab, Vector3 position = new Vector3(),
+            string name = null,
+            bool localScaleToOne = true)
+            where T : Component
         {
             Assert.IsNotNull(parent);
-            var childGo = Object.Instantiate(childPrefab.gameObject);
-            parent.AttachChild(childGo.gameObject, localScaleToOne);
-            return childGo.GetComponent<T>();
+            T component = GameObject.Instantiate(childPrefab, position, Quaternion.identity);
+            parent.AttachChild(component.gameObject, localScaleToOne);
+            if (!string.IsNullOrEmpty(name))
+                component.gameObject.name = name;
+
+            return component;
         }
 
-        public static GameObject InstantiateAsChild(this Transform parent, GameObject childPrefab, bool localScaleToOne = true)
+        public static GameObject InstantiateAsChild(this Transform parent, GameObject childPrefab,
+            Vector3 position = new Vector3(),
+            string name = null,
+            bool localScaleToOne = true)
         {
-            var childGo = Object.Instantiate(childPrefab);
+            var childGo = Object.Instantiate(childPrefab, position, Quaternion.identity);
+            if (!string.IsNullOrEmpty(name))
+                childGo.name = name;
+
             return parent.AttachChild(childGo, localScaleToOne);
         }
 
@@ -104,8 +109,8 @@ namespace GamePackages.Core
             if (localScaleToOne)
                 child.localScale = Vector3.one;
 
-            child.localPosition = Vector3.zero;
-            child.localRotation = Quaternion.identity;
+            //child.localPosition = Vector3.zero;
+            //child.localRotation = Quaternion.identity;
 
             return childGo;
         }

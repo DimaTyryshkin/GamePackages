@@ -15,6 +15,20 @@ namespace GamePackages.Core
             }
         }
 
+        public static bool IsAllNotNullBool<T>(T[] array) where T : class
+        {
+            if (array == null)
+                return false;
+
+            foreach (var e in array)
+            {
+                if (e == null)
+                    return false;
+            }
+
+            return true;
+        }
+
         public static void IsAllNotNull<T>(List<T> array, string msg = null) where T : class
         {
             Assert.IsNotNull(array, msg);
