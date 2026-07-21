@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using Unity.Plastic.Newtonsoft.Json;
 using UnityEngine.Assertions;
 
 namespace GamePackages.JsonPlayerData
@@ -46,43 +46,51 @@ namespace GamePackages.JsonPlayerData
         T data;
         IStringStorage jsonStorage;
 
-
+        JsonSerializerSettings serializerSettings;
 
         public PlayerDataStorage(IStringStorage jsonStorage)
         {
             Assert.IsNotNull(jsonStorage);
             this.jsonStorage = jsonStorage;
+
+            serializerSettings = new JsonSerializerSettings()
+            {
+                Culture = System.Globalization.CultureInfo.InvariantCulture,
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore
+            };
         }
 
-        public string GetRawSaveData()
+        string GetRawSaveData()
         {
             return jsonStorage.GetString("");
         }
 
-        public static T LoadFromJson(string json)
+        T LoadFromJson(string json)
         {
-            var data = JsonUtility.FromJson<T>(json);
+            try
+            {
+                data = JsonConvert.DeserializeObject<T>(json, serializerSettings);
+                //var data = JsonUtility.FromJson<T>(json);
+            }
+            catch (JsonSerializationException e)
+            {
+                throw new Exception($"Не удалось прочитать файл с сохранением: {e.Path} {e.Message}");
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Не удалось прочитать файл с сохранением: " + e.Message);
+            }
+
             Assert.IsNotNull(data);
 
             return data;
         }
 
-        public static string ToJson(T data)
+        string ToJson(T data)
         {
-            return JsonUtility.ToJson(data, true);
-        }
-
-        T LoadFromJson_CatchExceptionDecorator(string json)
-        {
-            try
-            {
-                return LoadFromJson(json);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                return new T();
-            }
+            //return JsonUtility.ToJson(data, true);
+            return JsonConvert.SerializeObject(data, serializerSettings);
         }
 
         public T GetDataSingleton()
@@ -113,6 +121,12 @@ namespace GamePackages.JsonPlayerData
             string json = ToJson(data);
             jsonStorage.SetString(json);
             jsonStorage.Save();
+        }
+
+        public void ReloadFromDisc()
+        {
+            data = null;
+            jsonStorage.Reload();
         }
 
         public void Clear()

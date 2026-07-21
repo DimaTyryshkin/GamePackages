@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using GamePackages.Core;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -16,7 +15,7 @@ namespace GamePackages.Core.Validation
     {
         public enum Type
         {
-            Error   = 0,
+            Error = 0,
             Warning = 1,
         }
 
@@ -28,15 +27,15 @@ namespace GamePackages.Core.Validation
         public Type type;
 
         string logMsg;
-        
-        
-        
+
+
+
         string FullName
         {
             get
-            { 
+            {
                 if (root is MonoBehaviour mb)
-                    return mb.gameObject.FullName();
+                    return $"{mb.gameObject.FullName()}[{root.GetType().Name}]";
 
                 if (root is GameObject go)
                     return go.FullName();
@@ -49,20 +48,20 @@ namespace GamePackages.Core.Validation
         {
             logMsg = ConvertToString();
         }
-        
+
         string ConvertToString()
-        { 
+        {
             string log = $"[<b>{header}</b>: <b>FullName=</b>{FullName}";
 
             if (fieldInfo != null)
                 log += $" <b>Field=</b>{fieldInfo.Name}]";
             else
                 log += "]";
- 
+
 
             if (msg != null)
             {
-                log += Environment.NewLine + msg ;
+                log += Environment.NewLine + msg;
             }
 
 #if UNITY_EDITOR
@@ -82,11 +81,11 @@ namespace GamePackages.Core.Validation
                         sceneName = goSceneName;
                 }
             }
-            
+
             if (!string.IsNullOrWhiteSpace(sceneName))
                 log += Environment.NewLine + $"<b>Scene=</b>{sceneName}";
 #endif
-            log += Environment.NewLine; 
+            log += Environment.NewLine;
             return log;
         }
 

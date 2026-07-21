@@ -16,6 +16,7 @@ namespace GamePackages.JsonPlayerData
         string GetString(string defaultValue);
         void SetString(string value);
         void Save();
+        void Reload();
     }
 
 
@@ -46,6 +47,8 @@ namespace GamePackages.JsonPlayerData
         {
             playerPrefs.Save();
         }
+
+        public void Reload() { }
     }
 
     public class FileStringStorage : IStringStorage
@@ -57,12 +60,7 @@ namespace GamePackages.JsonPlayerData
         {
             Assert.IsNotNull(file);
             this.file = file;
-
-            if (file.Exists)
-            {
-                using (var stream = file.OpenText())
-                    rawJson = stream.ReadToEnd();
-            }
+            Reload();
         }
 
         public string GetString(string defaultValue)
@@ -84,6 +82,16 @@ namespace GamePackages.JsonPlayerData
                 file.Directory.Create();
 
             File.WriteAllText(file.FullName, rawJson);
+        }
+
+        public void Reload()
+        {
+            rawJson = null;
+            if (file.Exists)
+            {
+                using (var stream = file.OpenText())
+                    rawJson = stream.ReadToEnd();
+            }
         }
     }
 
