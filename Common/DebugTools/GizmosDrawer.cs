@@ -148,11 +148,13 @@ namespace GamePackages.Core
 
             public override void Draw()
             {
+# if UNITY_EDITOR
                 Gizmos.color = color;
                 if (isXY)
                     GizmosExtension.DrawArrowXY(p1, p2);
                 else
                     GizmosExtension.DrawArrowXZ(p1, p2);
+#endif
             }
         }
 

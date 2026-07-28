@@ -1,5 +1,5 @@
-﻿using System;
-using Unity.Plastic.Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 using UnityEngine.Assertions;
 
 namespace GamePackages.JsonPlayerData
