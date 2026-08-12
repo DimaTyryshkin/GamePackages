@@ -18,6 +18,18 @@ namespace GamePackages.Core
             DrawArrow(from, to, size, xyRight, xyLeft);
         }
 
+        public static void DrawCrossXY(Vector3 p, float size)
+        {
+            float s = size;
+            Vector3 p1 = new Vector3(p.x - s, p.y + 0, p.x + 0);
+            Vector3 p2 = new Vector3(p.x + s, p.y + 0, p.x + 0);
+            Vector3 p3 = new Vector3(p.x + 0, p.y + s, p.x + 0);
+            Vector3 p4 = new Vector3(p.x + 0, p.y - s, p.x + 0);
+
+            Gizmos.DrawLine(p1, p2);
+            Gizmos.DrawLine(p3, p4);
+        }
+
         public static void DrawArrowXZ(Vector3 from, Vector3 to, float size = 0.25f)
         {
             DrawArrow(from, to, size, xzRight, xzLeft);
