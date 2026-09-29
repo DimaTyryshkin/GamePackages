@@ -73,5 +73,23 @@ namespace GamePackages.Core
                 Random.Range(p1.x, p2.x),
                 Random.Range(p1.y, p2.y));
         }
+
+        public static Vector2 RandomPointOnSide(this Rect rect)
+        {
+            float s1 = rect.size.x + rect.size.y;
+            if (Random.Range(0, s1) < rect.size.x)
+            {
+                return new Vector2(
+                    Random.Range(rect.xMin, rect.xMax),
+                    Random.Range(0, 100) > 50 ? rect.yMin : rect.yMax);
+
+            }
+            else
+            {
+                return new Vector2(
+                    Random.Range(0, 100) > 50 ? rect.xMin : rect.xMax,
+                    Random.Range(rect.yMin, rect.yMax));
+            }
+        }
     }
 }

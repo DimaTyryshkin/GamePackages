@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using GamePackages.Core;
@@ -12,6 +11,8 @@ using UnityEditor;
 
 namespace GamePackages.LineTool
 {
+
+
     [ExecuteInEditMode]
     public class LineObject : MonoBehaviour
     {
@@ -24,7 +25,7 @@ namespace GamePackages.LineTool
         [SerializeField] float yRotation;
 
         [SerializeField, HideInInspector] Transform objectsRoot;
-        
+
         Transform[] pathPoints;
         Transform[] PathPoints => pathPoints;
 
@@ -33,30 +34,30 @@ namespace GamePackages.LineTool
         void Start()
         {
         }
- 
+
         void OnEnable()
         {
             SceneView.duringSceneGui -= OnSceneGUI;
             SceneView.duringSceneGui += OnSceneGUI;
         }
-        
+
         void OnDisable()
         {
             //Save();
             SceneView.duringSceneGui -= OnSceneGUI;
         }
-        
+
         void OnDrawGizmos()
         {
             if (!enabled)
                 return;
 
             Validate();
-            
+
             Vector3 p1 = PathPoints[0].position;
             for (int i = 1; i < PathPoints.Length; i++)
             {
-               
+
                 Vector3 p2 = PathPoints[i].position;
                 Gizmos.DrawLine(p1, p2);
                 p1 = p2;
@@ -75,7 +76,7 @@ namespace GamePackages.LineTool
         }
 
         void Validate()
-        { 
+        {
             if (autoRebuild)
             {
                 if (Time.realtimeSinceStartup > timeNextRebuild)
@@ -95,12 +96,12 @@ namespace GamePackages.LineTool
         void Build()
         {
             Validate();
-            
+
             if (objectsRoot)
-            { 
+            {
                 Undo.DestroyObjectImmediate(objectsRoot.gameObject);
 
-                if(objectsRoot)
+                if (objectsRoot)
                     DestroyImmediate(objectsRoot.gameObject);
             }
 
@@ -108,13 +109,13 @@ namespace GamePackages.LineTool
             {
                 GameObject root = new GameObject("root");
                 root.transform.SetParent(transform);
- 
+
                 Undo.RegisterCreatedObjectUndo(root, "create root");
-                Undo.RegisterCompleteObjectUndo(this, "create root"); 
+                Undo.RegisterCompleteObjectUndo(this, "create root");
 
                 objectsRoot = root.transform;
             }
-                 
+
             Bounds bounds = prefab.transform.GetTotalRendererBounds();
             float step = bounds.size.z + space;
             Vector3 point = pathPoints[0].position;
@@ -127,9 +128,9 @@ namespace GamePackages.LineTool
                 if (Vector3.Distance(point, nextPoint) >= step)
                 {
                     Vector3 dir = nextPoint - point;
-                    newObject = objectsRoot.InstantiateAsChild(prefab, localScaleToOne:false);
+                    newObject = objectsRoot.InstantiateAsChild(prefab, localScaleToOne: false);
                     newObject.SetActive(true);
-                    newObject.transform.rotation = Quaternion.LookRotation(dir, Vector3.up) * Quaternion.Euler(0,yRotation,0);
+                    newObject.transform.rotation = Quaternion.LookRotation(dir, Vector3.up) * Quaternion.Euler(0, yRotation, 0);
                     newObject.transform.position = point;
 
                     point += dir.normalized * step;
@@ -140,22 +141,22 @@ namespace GamePackages.LineTool
                     nextPointIndex++;
                 }
             }
-            
+
             // replace with end
             if (lastPrefab && newObject)
             {
-                var lastObject = objectsRoot.InstantiateAsChild(lastPrefab, localScaleToOne:false);
+                var lastObject = objectsRoot.InstantiateAsChild(lastPrefab, localScaleToOne: false);
                 lastObject.SetActive(true);
                 lastObject.transform.rotation = newObject.transform.rotation;
                 lastObject.transform.position = newObject.transform.position;
-            } 
+            }
         }
 
 
         [Button()]
         void FindPoints()
-        { 
-            Undo.RecordObject(this, "Load"); 
+        {
+            Undo.RecordObject(this, "Load");
 
             List<Transform> points = new List<Transform>();
             points.AddRange(pointsRoot.GetComponentsInChildren<Transform>());
@@ -168,7 +169,7 @@ namespace GamePackages.LineTool
         void Save()
         {
             foreach (var child in objectsRoot.GetComponentsInChildren<Transform>())
-                Undo.RegisterCreatedObjectUndo(child.gameObject,"lineObject");
+                Undo.RegisterCreatedObjectUndo(child.gameObject, "lineObject");
         }
 
 #endif

@@ -1,10 +1,9 @@
-﻿using System.Linq;
+﻿using GamePackages.Core;
 using System.Collections.Generic;
-using GamePackages.Core;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
-
-using UnityEditor;
 
 namespace GamePackages.Audio
 {
@@ -14,11 +13,11 @@ namespace GamePackages.Audio
 
         public static readonly string createNewGroupLabel = "Create new";
         DirectoryTreeBuilder<SoundsSet> directoryBuilder;
-        
-        string[] groups; 
-        MusicsSet[]        musicSets;
+
+        string[] groups;
+        MusicsSet[] musicSets;
         AudioClipWrapper[] wrappersFree;
-        AudioClip[]        audioClipsFree;
+        AudioClip[] audioClipsFree;
 
         Vector2 scroll;
         int pageIndex = 1;
@@ -40,11 +39,11 @@ namespace GamePackages.Audio
 
         bool wrappersIsFoldOut;
         bool clipsIsFoldOut;
-            
+
         bool isDoubleError;
         bool showHelp;
-         
-        
+
+
         public static readonly int columnSizePlayBtn = 50;
         public static AppSoundsSettings appSoundsSettings;
         public static GUIStyle buttonLeftTextAlignmentStyle;
@@ -53,8 +52,8 @@ namespace GamePackages.Audio
 
         [MenuItem("GamePackages/Audio/Browser")]
         static void Init()
-        { 
-            AudioWrappersBrowser w = (AudioWrappersBrowser) GetWindow(typeof(AudioWrappersBrowser));
+        {
+            AudioWrappersBrowser w = (AudioWrappersBrowser)GetWindow(typeof(AudioWrappersBrowser));
             //w.Load();
             w.titleContent = new GUIContent("Sounds browser");
             w.Show();
@@ -73,9 +72,9 @@ namespace GamePackages.Audio
                 directoryBuilder == null ||
                 !appSoundsSettings)
                 Load();
-            
-            if(wrappersFree.Any(x=>!x) ||
-               audioClipsFree.Any(x=>!x) ||
+
+            if (wrappersFree.Any(x => !x) ||
+               audioClipsFree.Any(x => !x) ||
                !directoryBuilder.rootDirectory.Validate())
                 Load();
         }
@@ -83,7 +82,7 @@ namespace GamePackages.Audio
         void Draw()
         {
             GUILayout.BeginVertical();
-            { 
+            {
                 GUILayout.BeginHorizontal();
                 {
                     pageIndex = GUILayout.Toolbar(pageIndex, pages);
@@ -91,11 +90,11 @@ namespace GamePackages.Audio
                 GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();
- 
+
             scroll = EditorGUILayout.BeginScrollView(scroll);
-            { 
+            {
                 GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-                { 
+                {
                     //MusicSets
                     // if (pageIndex == 0)
                     // {
@@ -105,37 +104,37 @@ namespace GamePackages.Audio
                     //         GUILayout.Space(10);
                     //     }
                     // }
-                    
+
                     // Sets
                     if (pageIndex == 1)
                     {
                         drawer.DrawDirectory(directoryBuilder.rootDirectory, groups, 0);
                     }
-                    
+
                     // Wrappers
                     if (pageIndex == 2)
                     {
                         foreach (var w in wrappersFree)
                         {
-                            drawer.DrawWrapper(w, groups, 0, 0); 
+                            drawer.DrawWrapper(w, groups, 0, 0);
                             GUILayout.Space(10);
                         }
                     }
-                    
+
                     // Audio Clips
                     if (pageIndex == 3)
                     {
                         foreach (var clip in audioClipsFree)
                         {
                             drawer.DrawAudioClip(clip, 0, Reload);
-                          
+
                         }
                     }
                 }
                 GUILayout.EndVertical();
             }
             EditorGUILayout.EndScrollView();
-            
+
             GUILayout.BeginHorizontal();
             {
                 if (GUILayout.Button("ReLoad"))
@@ -148,12 +147,12 @@ namespace GamePackages.Audio
         }
 
         void DrawCatchWrapper()
-        { 
+        {
             try
             {
                 Draw();
                 isDoubleError = false;
-                
+
             }
             catch (System.Exception e)
             {
@@ -182,22 +181,22 @@ namespace GamePackages.Audio
         /// отделяем MusicsSet от SoundSet
         /// </summary>
         void Load()
-        { 
-            buttonLeftTextAlignmentStyle =  new GUIStyle(GUI.skin.button);
+        {
+            buttonLeftTextAlignmentStyle = new GUIStyle(GUI.skin.button);
             buttonLeftTextAlignmentStyle.alignment = TextAnchor.MiddleLeft;
-            
+
             Color color = EditorGUIUtility.isProSkin ? Color.green : Color.blue;
             headerStyle = drawer.GetGUIForFoldLabel(FontStyle.Bold, color, false);
-            
+
             foldHeaderStyle = drawer.GetGUIForFoldLabel(FontStyle.Bold, Color.red, true);
-            
+
             directoryBuilder = new DirectoryTreeBuilder<SoundsSet>();
             directoryBuilder.LoadAllFiles("Assets/Sounds/Sets");
-            
+
             //Clips free
             var allClip = EditorExtension.LoadAllAssetsOfType<AudioClip>("Assets/Sounds", includeSubFolder: true);
             HashSet<AudioClip> unusfulClips = new HashSet<AudioClip>(allClip);
-            
+
             //Wrappers
             var allWrappers = EditorExtension.LoadAllAssetsOfType<AudioClipWrapper>("Assets/Sounds", includeSubFolder: true);
             foreach (var wrap in allWrappers)
@@ -206,11 +205,11 @@ namespace GamePackages.Audio
                 unusfulClips.Remove(wrap.AudioClip); //Удаялем использлванные клипы
             }
             audioClipsFree = unusfulClips.OrderBy(c => c.name).ToArray();
-            
+
             //Load SoundGroups
             appSoundsSettings = AssetDatabase.LoadAssetAtPath<AppSoundsSettings>("Assets/Sounds/AppSoundsSettings.asset");
             Assert.IsNotNull(appSoundsSettings);
-            var groupsData = new List<string> {"None"};
+            var groupsData = new List<string> { "None" };
             groupsData.AddRange(appSoundsSettings.soundGroupSettings.Select(x => x.name));
             groupsData.Add(createNewGroupLabel);
             groups = groupsData.ToArray();
@@ -233,19 +232,19 @@ namespace GamePackages.Audio
                     }
                 }
             }
-            
+
             wrappersFree = unusfulWrappers.OrderBy(c => c.name).ToArray();
-            
+
             musicSets = allSoundSets.Select(x => x)
                 .Where(x => x is MusicsSet)
                 .Cast<MusicsSet>()
                 .OrderBy(x => x.name)
                 .ToArray();
-            
+
             foreach (var set in musicSets)
             {
                 allSoundSets.Remove(set);
-            } 
+            }
         }
     }
 }

@@ -83,6 +83,11 @@ namespace GamePackages.Audio
         [System.NonSerialized]
         public Dictionary<string, SoundGroup> soundGroups;
 
+        private void Start()
+        {
+            soundPlayerPrefab.gameObject.SetActive(false);
+        }
+
         public static void SetAsSceneSound(AppSounds appSounds)
         {
             instScene = appSounds;

@@ -9,7 +9,6 @@ using UnityEngine.UI;
 
 namespace GamePackages.Core
 {
-
     public class FPSCounter : MonoBehaviour
     {
         [SerializeField, IsntNull]
