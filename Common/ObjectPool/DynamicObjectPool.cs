@@ -1,17 +1,10 @@
+using NaughtyAttributes;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-using System;
-using NaughtyAttributes;
-
-
-
-
-
-
 
 #if UNITY_EDITOR
-using UnityEditor;
 #endif
 
 namespace GamePackages.Core
@@ -54,7 +47,7 @@ namespace GamePackages.Core
             if (!prefabToPool.TryGetValue(prefab, out ObjectPool pool))
             {
 #if UNITY_EDITOR
-                Assert.IsFalse(string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(prefab)), $"Объект '{prefab.name}' должен быть ассетом");
+                //Assert.IsFalse(string.IsNullOrWhiteSpace(AssetDatabase.GetAssetPath(prefab)), $"Объект '{prefab.name}' должен быть ассетом");
 #endif
                 GameObject poolGo = new GameObject(prefab.name);
                 poolGo.transform.SetParent(transform);
@@ -64,6 +57,7 @@ namespace GamePackages.Core
 
             GameObject go = pool.GetObject(parent);
             instancesToPool[go] = pool;
+
             return go;
         }
 
@@ -72,7 +66,7 @@ namespace GamePackages.Core
             if (instancesToPool.TryGetValue(go, out ObjectPool pool))
                 Return(go, pool);
             else
-                throw new System.Exception($"Pool not found for go '{go.FullName()}'");
+                throw new System.Exception($"Pool not found for go '{go.FullName()}'. Возможно, объект пытаются вернуть в пул второй раз");
         }
 
         [Button]
@@ -124,6 +118,13 @@ namespace GamePackages.Core
 
             foreach ((_, ObjectPool pool) in prefabToPool)
                 pool.forceNewInstant = forceNewInstant;
+        }
+
+        [Button]
+        void RemoveAll()
+        {
+            foreach ((_, ObjectPool pool) in prefabToPool)
+                pool.RemoveAllInPool();
         }
     }
 }

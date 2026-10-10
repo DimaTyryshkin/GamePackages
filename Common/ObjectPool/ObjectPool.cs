@@ -41,6 +41,14 @@ namespace GamePackages.Core
             pool.Enqueue(go);
         }
 
+        public void RemoveAllInPool()
+        {
+            foreach (var item in pool)
+                GameObject.Destroy(item);
+
+            pool.Clear();
+        }
+
         //public bool IsObjectFromPool(GameObject go) => instances.Contains(go);
 
         //public void Reset()
