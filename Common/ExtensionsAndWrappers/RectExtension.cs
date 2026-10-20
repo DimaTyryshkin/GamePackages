@@ -91,5 +91,19 @@ namespace GamePackages.Core
                     Random.Range(rect.yMin, rect.yMax));
             }
         }
+
+        public static Vector2 Clamp(this Rect rect, Vector2 p)
+        {
+            if (p.x < rect.xMin)
+                p.x = rect.xMin;
+            if (p.x > rect.xMax)
+                p.x = rect.xMax;
+            if (p.y < rect.yMin)
+                p.y = rect.yMin;
+            if (p.y > rect.yMax)
+                p.y = rect.yMax;
+
+            return p;
+        }
     }
 }

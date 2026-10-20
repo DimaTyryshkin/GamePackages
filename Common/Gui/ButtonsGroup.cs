@@ -28,13 +28,13 @@ namespace GamePackages.Core
         void Start()
         {
             foreach (var button in buttons)
-                button.onClick.AddListener(OnClickButton);
+                button.onClick.AddListener(() => OnClickButton(button));
         }
 
-        void OnClickButton()
+        void OnClickButton(Button button)
         {
-            foreach (var button in buttons)
-                button.interactable = false;
+            foreach (var b in buttons)
+                b.interactable = button != b;
         }
 
 #if UNITY_EDITOR
