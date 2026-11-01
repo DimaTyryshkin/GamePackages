@@ -9,9 +9,15 @@ namespace GamePackages.Core
     {
         [SerializeField, IsntNull] TMP_Text timerText;
 
+        float startTime;
+        private void Start()
+        {
+            startTime = Time.unscaledTime;
+        }
+
         private void Update()
         {
-            TimeSpan timeInGame = TimeSpan.FromSeconds(Time.realtimeSinceStartup);
+            TimeSpan timeInGame = TimeSpan.FromSeconds(Time.unscaledTime - startTime);
             timerText.text = timeInGame.ToString(@"mm\:ss");
         }
     }
