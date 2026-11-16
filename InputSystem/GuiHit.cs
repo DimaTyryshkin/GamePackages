@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using GamePackages.Core;
+using NaughtyAttributes;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -28,6 +30,24 @@ namespace GamePackages.InputSystem
             }
         }
 
+        public static Vector2 GetWorldPoint(Transform transform, Camera gameCamera)
+        {
+            Canvas canvas = transform.GetComponentInParent<Canvas>();
+            if (canvas)
+            {
+                Camera cam = null;
+                if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
+                    cam = canvas.worldCamera;
+
+                Vector3 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, transform.position);
+                return gameCamera.ScreenPointToWorldPointOnPlane(screenPoint, Plaine.XY);
+            }
+            else
+            {
+                return transform.position;
+            }
+        }
+
         bool HitGraphic()
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
@@ -48,6 +68,16 @@ namespace GamePackages.InputSystem
         void LateUpdate()
         {
             valueCalculated = false;
+        }
+
+        [SerializeField] Camera gameCamera;
+        [SerializeField] Transform rectGui;
+        [SerializeField] Transform objectToReplace;
+
+        [Button]
+        void TestGetWorldPoint()
+        {
+            objectToReplace.position = GetWorldPoint(rectGui, gameCamera);
         }
     }
 }
