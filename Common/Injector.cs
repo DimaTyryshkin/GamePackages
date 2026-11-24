@@ -40,14 +40,40 @@ namespace GamePackages.Core
 
         public T Inject<T>(T obj, params object[] parameters) where T : class
         {
+            return Inject(obj, parameters);
+        }
+
+
+        public static T Inject2<T>(T obj, params object[] parameters) where T : class
+        {
+            return Inject2(obj, null, parameters);
+        }
+
+        public static T Inject2<T>(T obj, Dictionary<Type, object> values = null, params object[] parameters) where T : class
+        {
             Assert.IsNotNull(obj);
-            ResolveFields(obj, parameters);
-            ResolveProperties(obj);
+            ResolveFields(obj, values, parameters);
+            ResolveProperties(obj, values, parameters);
 
             return obj;
         }
 
-        private void ResolveFields<T>(T obj, object[] parameters)
+        static object GetByType(Type type, object[] parameters)
+        {
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                object item = parameters[i];
+                if (item is not null && item.GetType() == type)
+                {
+                    parameters[i] = null;
+                    return item;
+                }
+            }
+
+            return null;
+        }
+
+        static void ResolveFields<T>(T obj, Dictionary<Type, object> values, object[] parameters)
         {
             FieldInfo[] fields = obj
                 .GetType()
@@ -71,9 +97,8 @@ namespace GamePackages.Core
                     }
                 }
 
-                if (values.TryGetValue(field.FieldType, out var injectValue2))
+                if (values != null && values.TryGetValue(field.FieldType, out var injectValue2))
                 {
-
                     field.SetValue(obj, injectValue2);
                     continue;
                 }
@@ -91,23 +116,7 @@ namespace GamePackages.Core
             }
         }
 
-        private object GetByType(Type type, object[] parameters)
-        {
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                object item = parameters[i];
-                if (item is not null && item.GetType() == type)
-                {
-                    parameters[i] = null;
-                    return item;
-                }
-            }
-
-            return null;
-        }
-
-
-        private void ResolveProperties<T>(T obj)
+        static void ResolveProperties<T>(T obj, Dictionary<Type, object> values, object[] parameters)
         {
             var properties = obj
                 .GetType()
@@ -121,13 +130,32 @@ namespace GamePackages.Core
                 if (injectAttrribute == null)
                     continue;
 
-                if (values.TryGetValue(p.PropertyType, out var injectValue))
+                if (parameters is not null)
+                {
+                    object injectValue1 = GetByType(p.PropertyType, parameters);
+                    if (injectValue1 is not null)
+                    {
+                        p.SetValue(obj, injectValue1);
+                        continue;
+                    }
+                }
+
+                if (values != null && values.TryGetValue(p.PropertyType, out var injectValue))
                 {
                     p.SetValue(obj, injectValue);
                 }
                 else
                 {
                     throw new Exception($"Value for inject not found. Field: '{p.PropertyType.Name} {p.DeclaringType.Name}.{p.Name}'");
+                }
+            }
+
+            if (parameters is not null)
+            {
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    if (parameters[i] is not null)
+                        throw new Exception($"Parameter[{i}] with type '{parameters[i].GetType().Name}' was not used in inject to <b>{obj.GetType().Name}</b>");
                 }
             }
         }

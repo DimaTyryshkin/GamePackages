@@ -51,25 +51,18 @@ namespace GamePackages.Core.Validation
 
         string ConvertToString()
         {
-            string log = $"[<b>{header}</b>: <b>FullName=</b>{FullName}";
+            string log = $"<b>{header} {msg}</b>" + Environment.NewLine;
+            log += $" FullName={FullName}" + Environment.NewLine;
 
             if (fieldInfo != null)
-                log += $" <b>Field=</b>{fieldInfo.Name}]";
-            else
-                log += "]";
-
-
-            if (msg != null)
-            {
-                log += Environment.NewLine + msg;
-            }
+                log += $" Member={fieldInfo.Name}" + Environment.NewLine;
 
 #if UNITY_EDITOR
             var pathToRoot = AssetDatabase.GetAssetPath(root);
 
             if (!string.IsNullOrWhiteSpace(pathToRoot))
             {
-                log += Environment.NewLine + $"<b>Path=</b>{pathToRoot}";
+                log += $" Path={pathToRoot}" + Environment.NewLine;
                 sceneName = "Assets";
             }
             else
@@ -83,7 +76,7 @@ namespace GamePackages.Core.Validation
             }
 
             if (!string.IsNullOrWhiteSpace(sceneName))
-                log += Environment.NewLine + $"<b>Scene=</b>{sceneName}";
+                log += $" Scene={sceneName}" + Environment.NewLine;
 #endif
             log += Environment.NewLine;
             return log;
