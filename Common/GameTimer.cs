@@ -8,17 +8,21 @@ namespace GamePackages.Core
     public class GameTimer : MonoBehaviour
     {
         [SerializeField, IsntNull] TMP_Text timerText;
+        [SerializeField]
 
-        float startTime;
-        private void Start()
-        {
-            startTime = Time.unscaledTime;
-        }
+        static float startTime;
 
         private void Update()
         {
-            TimeSpan timeInGame = TimeSpan.FromSeconds(Time.unscaledTime - startTime);
+            TimeSpan timeInGame = TimeSpan.FromSeconds(GetTime() - startTime);
             timerText.text = timeInGame.ToString(@"mm\:ss");
+        }
+
+        float GetTime() => Time.realtimeSinceStartup;
+
+        public void ResetStartTime()
+        {
+            startTime = GetTime();
         }
     }
 }
